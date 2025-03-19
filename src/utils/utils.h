@@ -1,0 +1,23 @@
+#pragma once
+
+#include <stdlib.h>
+
+#define error(...) (fprintf(stderr, __VA_ARGS__))
+
+struct image_rgb {
+	unsigned char *red;
+	unsigned char *green;
+	unsigned char *blue;
+};
+
+struct image_rgb initialize_image_rgb(int width, int height);
+
+void free_image_rgb(struct image_rgb *image);
+
+void split_image_into_rgb_channels(unsigned char *image,
+								   struct image_rgb channel_image, int width,
+								   int height);
+
+void assemble_image_from_rgb_channels(unsigned char *image,
+									  struct image_rgb channel_image, int width,
+									  int height);
