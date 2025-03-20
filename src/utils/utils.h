@@ -1,6 +1,8 @@
 #pragma once
 
+#include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define error(...) (fprintf(stderr, __VA_ARGS__))
 
@@ -21,3 +23,5 @@ void split_image_into_rgb_channels(unsigned char *image,
 void assemble_image_from_rgb_channels(unsigned char *image,
 									  struct image_rgb channel_image, int width,
 									  int height);
+
+const char *extract_filename(const char *path);

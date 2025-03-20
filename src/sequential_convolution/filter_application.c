@@ -10,10 +10,8 @@ void apply_filter(struct image_rgb input_image, struct image_rgb output_image,
 			// multiply every value of the filter with corresponding image pixel
 			for (int filterY = 0; filterY < filter.size; filterY++)
 				for (int filterX = 0; filterX < filter.size; filterX++) {
-					int imageX =
-						(x - filter.size / 2 + filterX + width) % width;
-					int imageY =
-						(y - filter.size / 2 + filterY + height) % height;
+					int imageX = (x - filter.size / 2 + filterX + width) % width;
+					int imageY = (y - filter.size / 2 + filterY + height) % height;
 
 					red += input_image.red[imageY * width + imageX] *
 						   filter.kernel[filterY][filterX];
