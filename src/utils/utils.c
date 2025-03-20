@@ -45,3 +45,12 @@ void assemble_image_from_rgb_channels(unsigned char *image,
 		image[i * 3 + 2] = channel_image.blue[i];
 	}
 }
+
+const char *extract_filename(const char *path) {
+	const char *last_slash = strrchr(path, '/');
+	if (last_slash == NULL) {
+		return path;
+	}
+
+	return last_slash + 1;
+}
