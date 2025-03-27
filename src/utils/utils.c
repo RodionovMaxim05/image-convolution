@@ -1,5 +1,7 @@
 #include "utils.h"
 
+#define MICROSECONDS_IN_SECOND 1000000.0
+
 void free_image_rgb(struct image_rgb *image) {
 	free(image->red);
 	free(image->green);
@@ -9,9 +11,9 @@ void free_image_rgb(struct image_rgb *image) {
 struct image_rgb initialize_image_rgb(int width, int height) {
 	struct image_rgb channel_image;
 
-	channel_image.red = malloc(width * height);
-	channel_image.green = malloc(width * height);
-	channel_image.blue = malloc(width * height);
+	channel_image.red = malloc((size_t)width * (size_t)height);
+	channel_image.green = malloc((size_t)width * (size_t)height);
+	channel_image.blue = malloc((size_t)width * (size_t)height);
 
 	if (channel_image.red == NULL || channel_image.green == NULL ||
 		channel_image.blue == NULL) {
@@ -24,7 +26,7 @@ struct image_rgb initialize_image_rgb(int width, int height) {
 	return channel_image;
 }
 
-void split_image_into_rgb_channels(unsigned char *image,
+void split_image_into_rgb_channels(const unsigned char *image,
 								   struct image_rgb channel_image, int width,
 								   int height) {
 
@@ -53,4 +55,11 @@ const char *extract_filename(const char *path) {
 	}
 
 	return last_slash + 1;
+}
+
+double get_time_in_seconds(void) {
+	struct timeval time;
+	gettimeofday(&time, NULL);
+
+	return (double)time.tv_sec + (double)time.tv_usec / MICROSECONDS_IN_SECOND;
 }

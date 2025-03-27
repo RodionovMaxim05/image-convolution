@@ -54,3 +54,4 @@ dkms.conf
 .vscode
 build
 pics/
+*_cat.bmp
