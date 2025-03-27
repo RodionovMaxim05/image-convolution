@@ -32,30 +32,30 @@ const double emboss[5][5] = {{-1, -1, -1, -1, 0},
 							 {-1, 0, 1, 1, 1},
 							 {0, 1, 1, 1, 1}};
 
-void free_filter(struct filter *f) {
-	for (int i = 0; i < f->size; i++) {
-		free(f->kernel[i]);
+void free_filter(struct filter *filter) {
+	for (int i = 0; i < filter->size; i++) {
+		free(filter->kernel[i]);
 	}
-	free(f->kernel);
+	free((void *)filter->kernel);
 }
 
 struct filter create_filter(int size, double factor, double bias,
 							const double values[size][size]) {
-	struct filter f;
-	f.size = size;
-	f.factor = factor;
-	f.bias = bias;
+	struct filter filter;
+	filter.size = size;
+	filter.factor = factor;
+	filter.bias = bias;
 
-	f.kernel = malloc(size * sizeof(double *));
-	if (f.kernel == NULL) {
+	filter.kernel = (double **)malloc(size * sizeof(double *));
+	if (filter.kernel == NULL) {
 		struct filter empty = {0, 0.0, 0.0, NULL};
 		return empty;
 	}
 
 	for (int i = 0; i < size; i++) {
-		f.kernel[i] = malloc(size * sizeof(double));
-		if (f.kernel[i] == NULL) {
-			free_filter(&f);
+		filter.kernel[i] = malloc(size * sizeof(double));
+		if (filter.kernel[i] == NULL) {
+			free_filter(&filter);
 
 			struct filter empty = {0, 0.0, 0.0, NULL};
 			return empty;
@@ -64,9 +64,9 @@ struct filter create_filter(int size, double factor, double bias,
 
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-			f.kernel[i][j] = values[i][j];
+			filter.kernel[i][j] = values[i][j];
 		}
 	}
 
-	return f;
+	return filter;
 }

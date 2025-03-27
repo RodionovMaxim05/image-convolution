@@ -2,6 +2,34 @@
 
 #include <stdlib.h>
 
+#define ID_SIZE 3
+#define ID_FACTOR 1.0
+#define ID_BIAS 0.0
+
+#define FAST_BLUR_SIZE 3
+#define FAST_BLUR_FACTOR 1.0
+#define FAST_BLUR_BIAS 0.0
+
+#define BLUR_SIZE 5
+#define BLUR_FACTOR (1.0 / 13.0)
+#define BLUR_BIAS 0.0
+
+#define GAUS_BLUR_SIZE 5
+#define GAUS_BLUR_FACTOR (1.0 / 256.0)
+#define GAUS_BLUR_BIAS 0.0
+
+#define MOTION_BLUR_SIZE 9
+#define MOTION_BLUR_FACTOR (1.0 / 9.0)
+#define MOTION_BLUR_BIAS 0.0
+
+#define EDGE_DETECTION_SIZE 3
+#define EDGE_DETECTION_FACTOR 1.0
+#define EDGE_DETECTION_BIAS 0.0
+
+#define EMBOSS_SIZE 5
+#define EMBOSS_FACTOR 1.0
+#define EMBOSS_BIAS 128.0
+
 struct filter {
 	int size;
 	double factor;
