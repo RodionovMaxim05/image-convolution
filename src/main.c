@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 		strcmp(argv[1], "--default-image") == 0 ? "images/cat.bmp" : argv[1];
 
 	image = stbi_load(image_path, &width, &height, &channels, 3);
-	if (handle_error(!image, "Could not open or find the image!")) {
+	if (handle_error(!image, "Could not open or find the image!\n")) {
 		goto cleanup_and_err;
 	}
 
@@ -59,13 +59,13 @@ int main(int argc, char *argv[]) {
 
 		if (strcmp(mode_str, "seq") != 0) {
 			if (handle_error(strncmp(argv[4], "--thread=", THREAD_PREFIX_LEN) != 0,
-							 "Missing --thread argument")) {
+							 "Missing --thread argument\n")) {
 				goto cleanup_and_err;
 			};
 			threads_num = atoi(argv[4] + THREAD_PREFIX_LEN);
 		}
 	} else {
-		if (handle_error(1, "Missing --mode argument")) {
+		if (handle_error(1, "Missing --mode argument\n")) {
 			goto cleanup_and_err;
 		}
 	}
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 	channel_image = initialize_image_rgb(width, height);
 	if (handle_error(channel_image.red == NULL || channel_image.green == NULL ||
 						 channel_image.blue == NULL,
-					 "Memory allocation error for channel_image.")) {
+					 "Memory allocation error for channel_image.\n")) {
 		goto cleanup_and_err;
 	}
 
@@ -99,13 +99,13 @@ int main(int argc, char *argv[]) {
 		image_filter =
 			create_filter(EMBOSS_SIZE, EMBOSS_FACTOR, EMBOSS_BIAS, emboss);
 	} else {
-		if (handle_error(1, "Unknown filter name: %s", filter_name)) {
+		if (handle_error(1, "Unknown filter name: %s\n", filter_name)) {
 			goto cleanup_and_err;
 		}
 	}
 
 	if (handle_error(image_filter.kernel == NULL,
-					 "Memory allocation error for filter.")) {
+					 "Memory allocation error for filter.\n")) {
 		goto cleanup_and_err;
 	}
 
@@ -113,30 +113,41 @@ int main(int argc, char *argv[]) {
 	if (handle_error(result_channel_image.red == NULL ||
 						 result_channel_image.green == NULL ||
 						 result_channel_image.blue == NULL,
-					 "Memory allocation error for result_channel_image.")) {
+					 "Memory allocation error for result_channel_image.\n")) {
 		goto cleanup_and_err;
 	}
 
+	int return_value = 0;
 	double start_time = get_time_in_seconds();
 	if (strcmp(mode_str, "row") == 0) {
-		parallel_row(&channel_image, &result_channel_image, width, height,
-					 image_filter, threads_num);
+		return_value = parallel_row(&channel_image, &result_channel_image, width,
+									height, image_filter, threads_num);
 	} else if (strcmp(mode_str, "column") == 0) {
-		parallel_column(&channel_image, &result_channel_image, width, height,
-						image_filter, threads_num);
+		return_value = parallel_column(&channel_image, &result_channel_image, width,
+									   height, image_filter, threads_num);
+	} else if (strcmp(mode_str, "block") == 0) {
+		return_value = parallel_block(&channel_image, &result_channel_image, width,
+									  height, image_filter, threads_num);
+	} else if (strcmp(mode_str, "pixel") == 0) {
+		return_value = parallel_pixel(&channel_image, &result_channel_image, width,
+									  height, image_filter, threads_num);
 	} else if (strcmp(mode_str, "seq") == 0) {
 		sequential_application(&channel_image, &result_channel_image, width, height,
 							   image_filter);
 	} else {
-		if (handle_error(1, "Unknown mode name: %s", mode_str)) {
+		if (handle_error(1, "Unknown mode name: %s\n", mode_str)) {
 			goto cleanup_and_err;
 		}
 	}
 	double end_time = get_time_in_seconds();
 
+	if (handle_error(return_value != 0, "Failed to create thread.\n")) {
+		goto cleanup_and_err;
+	}
+
 	result_image = malloc((size_t)width * (size_t)height * (size_t)channels);
 	if (handle_error(result_image == NULL,
-					 "Memory allocation error for result_image.")) {
+					 "Memory allocation error for result_image.\n")) {
 		goto cleanup_and_err;
 	}
 
@@ -147,7 +158,7 @@ int main(int argc, char *argv[]) {
 		malloc(PATH_PREFIX_LENGTH + UNDERSCORE_COUNT + strlen(file_name) +
 			   strlen(mode_str) + strlen(filter_name) + NULL_TERMINATOR_LENGTH);
 	if (handle_error(output_file_path == NULL,
-					 "Memory allocation error for output_file_path.")) {
+					 "Memory allocation error for output_file_path.\n")) {
 		goto cleanup_and_err;
 	}
 

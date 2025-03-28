@@ -3,6 +3,8 @@
 #include "../src/filters/filter.h"
 #include "../src/utils/utils.h"
 
+#define UPPER_SIZE_LIMIT 2500 // To ensure that the filter is not used for too long.
+
 static struct image_rgb initialize_and_check_image_rgb(int width, int height) {
 	struct image_rgb image = initialize_image_rgb(width, height);
 	assert_non_null(image.red);

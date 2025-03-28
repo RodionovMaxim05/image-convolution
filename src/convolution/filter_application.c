@@ -34,41 +34,60 @@ void sequential_application(struct image_rgb *input_image,
 	}
 }
 
-void *process_image_part(void *arg) {
+void *process_dynamic(void *arg) {
 	struct thread_data *data = (struct thread_data *)arg;
 
-	printf("start_x: %d, start_y: %d, end_x: %d, end_y: %d\n", data->start_x,
-		   data->start_y, data->end_x, data->end_y);
+	while (1) {
+		int block_index = atomic_fetch_add(data->next_block, 1);
 
-	for (int x = data->start_x; x < data->end_x; x++) {
-		for (int y = data->start_y; y < data->end_y; y++) {
-			double red = 0.0, green = 0.0, blue = 0.0;
+		if (block_index >= data->num_blocks) {
+			break;
+		}
 
-			for (int filterY = 0; filterY < data->filter.size; filterY++) {
-				for (int filterX = 0; filterX < data->filter.size; filterX++) {
-					int imageX =
-						(x - data->filter.size / 2 + filterX + data->width) %
-						data->width;
-					int imageY =
-						(y - data->filter.size / 2 + filterY + data->height) %
-						data->height;
+		int block_x = block_index % data->num_cols;
+		int block_y = block_index / data->num_cols;
 
-					red += data->input_image->red[imageY * data->width + imageX] *
-						   data->filter.kernel[filterY][filterX];
-					green +=
-						data->input_image->green[imageY * data->width + imageX] *
-						data->filter.kernel[filterY][filterX];
-					blue += data->input_image->blue[imageY * data->width + imageX] *
+		int start_x = block_x * data->block_width;
+		int start_y = block_y * data->block_height;
+
+		int end_x = min(start_x + data->block_width, data->width);
+		int end_y = min(start_y + data->block_height, data->height);
+
+		for (int y = start_y; y < end_y; y++) {
+			for (int x = start_x; x < end_x; x++) {
+				double red = 0.0, green = 0.0, blue = 0.0;
+
+				for (int filterY = 0; filterY < data->filter.size; filterY++) {
+					for (int filterX = 0; filterX < data->filter.size; filterX++) {
+						int imageX =
+							(x - data->filter.size / 2 + filterX + data->width) %
+							data->width;
+						int imageY =
+							(y - data->filter.size / 2 + filterY + data->height) %
+							data->height;
+
+						red +=
+							data->input_image->red[imageY * data->width + imageX] *
 							data->filter.kernel[filterY][filterX];
+						green +=
+							data->input_image->green[imageY * data->width + imageX] *
+							data->filter.kernel[filterY][filterX];
+						blue +=
+							data->input_image->blue[imageY * data->width + imageX] *
+							data->filter.kernel[filterY][filterX];
+					}
 				}
-			}
 
-			data->output_image->red[y * data->width + x] = min(
-				max((int)(data->filter.factor * red + data->filter.bias), 0), 255);
-			data->output_image->green[y * data->width + x] = min(
-				max((int)(data->filter.factor * green + data->filter.bias), 0), 255);
-			data->output_image->blue[y * data->width + x] = min(
-				max((int)(data->filter.factor * blue + data->filter.bias), 0), 255);
+				data->output_image->red[y * data->width + x] =
+					min(max((int)(data->filter.factor * red + data->filter.bias), 0),
+						255);
+				data->output_image->green[y * data->width + x] = min(
+					max((int)(data->filter.factor * green + data->filter.bias), 0),
+					255);
+				data->output_image->blue[y * data->width + x] = min(
+					max((int)(data->filter.factor * blue + data->filter.bias), 0),
+					255);
+			}
 		}
 	}
 
