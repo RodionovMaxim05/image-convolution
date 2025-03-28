@@ -3,8 +3,6 @@
 
 #include "utils_for_tests.c"
 
-#define UPPER_SIZE_LIMIT 2500 // To ensure that the filter is not used for too long.
-
 // Filter Inversion Tests
 
 static void test_filter_inverse_with_random_image(void **state) {

@@ -24,7 +24,14 @@ int main(void) {
 		cmocka_unit_test(test_filter_zero_padding_with_random_image),
 		cmocka_unit_test(test_filter_zero_padding_with_default_image),
 
+		cmocka_unit_test(test_parallel_pixel_with_default_image),
+		cmocka_unit_test(test_parallel_pixel_with_random_image),
 		cmocka_unit_test(test_parallel_row_with_default_image),
+		cmocka_unit_test(test_parallel_row_with_random_image),
+		cmocka_unit_test(test_parallel_column_with_default_image),
+		cmocka_unit_test(test_parallel_column_with_random_image),
+		cmocka_unit_test(test_parallel_block_with_default_image),
+		cmocka_unit_test(test_parallel_block_with_random_image),
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
