@@ -1,5 +1,13 @@
 #include "filter.h"
 
+const FilterInfo filters_info[] = {{"id", "Identity filter (no effect)."},
+								   {"fbl", "Fast blur filter (3x3 kernel)."},
+								   {"bl", "Standard blur filter (5x5 kernel)."},
+								   {"gbl", "Gaussian blur filter (5x5 kernel)."},
+								   {"mbl", "Motion blur filter (9x9 kernel)."},
+								   {"ed", "Edge detection filter (3x3 kernel)."},
+								   {"em", "Emboss filter (5x5 kernel)."}};
+
 const double id[3][3] = {{0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 0.0}};
 
 const double fast_blur[3][3] = {{0.0, 0.2, 0.0}, {0.2, 0.2, 0.2}, {0.0, 0.2, 0.0}};

@@ -30,6 +30,15 @@
 #define EMBOSS_FACTOR 1.0
 #define EMBOSS_BIAS 128.0
 
+#define NUM_OF_FILTERS 7
+
+typedef struct {
+	const char *name;
+	const char *description;
+} FilterInfo;
+
+extern const FilterInfo filters_info[];
+
 struct filter {
 	int size;
 	double factor;
