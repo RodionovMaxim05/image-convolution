@@ -21,15 +21,10 @@ jobs:
         run: ./scripts/build.sh
         
       - name: Check Code Formatting
-        run: |
-          find . -type f \( -name "*.c" -o -name "*.h" \) -not \( -path "./src/stb_image/*" -o -path "./build/*" \) | \
-          xargs -n1 sh -c 'clang-format --dry-run --Werror "$1" || { echo "Formatting error in $1"; exit 1; }' _
-        shell: bash
+        run: ./scripts/check_format.sh 
 
       - name: Run Static Analysis
-        run: |
-          find . -type f -name "*.c" -not \( -path "./tests/*" -o -path "./build/*" \) | xargs clang-tidy -p ./build
-        shell: bash
+        run: ./scripts/run_clang_tidy.sh
 
       - name: Test
         run: ./scripts/test.sh

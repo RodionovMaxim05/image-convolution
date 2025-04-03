@@ -26,10 +26,24 @@ static inline bool handle_error(bool condition, const char *message, ...) {
 
 int main(int argc, char *argv[]) {
 	if (argc < 4) {
-		error("Usage: %s <image_path | --default-image> <filter_name> --mode=<mode> "
-			  "--thread=<num> | <image_path | --default-image> <filter_name> "
-			  "--mode=seq \n",
-			  argv[0]);
+		error("Usage:\n"
+			  "  %s <image_path | --default-image> <filter_name> --mode=<mode> "
+			  "--thread=<num>\n"
+			  "  %s <image_path | --default-image> <filter_name> --mode=seq\n\n"
+			  "Options:\n"
+			  "  <image_path>           Path to the input image file.\n"
+			  "  --default-image        Use a predefined default image.\n"
+			  "  <filter_name>          Name of the filter to apply ().\n"
+			  "  --mode=<mode>          Execution mode: 'seq' for sequential or "
+			  "'row', 'column', 'block', 'pixel' "
+			  "for parallel.\n"
+			  "  --thread=<num>         Number of threads to use in parallel mode "
+			  "(ignored if --mode=seq).\n\n"
+			  "Available Filters:\n",
+			  argv[0], argv[0]);
+		for (int i = 0; i < NUM_OF_FILTERS; i++) {
+			error("  %-22s %s\n", filters_info[i].name, filters_info[i].description);
+		}
 		return -1;
 	}
 
@@ -86,7 +100,7 @@ int main(int argc, char *argv[]) {
 									 FAST_BLUR_BIAS, fast_blur);
 	} else if (strcmp(filter_name, "bl") == 0) {
 		image_filter = create_filter(BLUR_SIZE, BLUR_FACTOR, BLUR_BIAS, blur);
-	} else if (strcmp(filter_name, "gb") == 0) {
+	} else if (strcmp(filter_name, "gbl") == 0) {
 		image_filter = create_filter(GAUS_BLUR_SIZE, GAUS_BLUR_FACTOR,
 									 GAUS_BLUR_BIAS, gaus_blur);
 	} else if (strcmp(filter_name, "mbl") == 0) {
