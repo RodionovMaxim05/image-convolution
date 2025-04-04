@@ -52,6 +52,7 @@ Mkfile.old
 dkms.conf
 
 .vscode
+__pycache__
 build
 pics/
 *_cat.bmp

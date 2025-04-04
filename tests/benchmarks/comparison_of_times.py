@@ -1,9 +1,9 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import stats
 import re
 import filecmp
+from utils import analyze_execution_data, print_warning
 
 # Configuration constants
 PROGRAM_PATH = "./build/src/image-convolution"
@@ -30,22 +30,16 @@ FILTERS_DICT = dict(zip(FILTERS, FILTERS_INFO))
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
-def print_warning(message: str):
-    RED_ANSI = "\033[91m"
-    RESET_ANSI = "\033[0m"
-    print(f"{RED_ANSI}*** WARNING ***{RESET_ANSI}")
-    print(f"{RED_ANSI}{message}{RESET_ANSI}\n")
-
-
 def run_program(filter: str, mode: str):
     execution_times = []
+    if mode == "seq":
+        command = f"{PROGRAM_PATH} {IMAGE_PATH} {filter} --mode={mode}"
+    else:
+        command = (
+            f"{PROGRAM_PATH} {IMAGE_PATH} {filter} --mode={mode} --thread={THREAD_NUM}"
+        )
 
     for _ in range(NUM_RUNS):
-        if mode == "seq":
-            command = f"{PROGRAM_PATH} {IMAGE_PATH} {filter} --mode={mode}"
-        else:
-            command = f"{PROGRAM_PATH} {IMAGE_PATH} {filter} --mode={mode} --thread={THREAD_NUM}"
-
         output = os.popen(command).read().strip()
         match = re.search(r"The convolution took (\d+\.\d+)", output)
         if match:
@@ -55,30 +49,6 @@ def run_program(filter: str, mode: str):
             print_warning(f"Failed to parse output: {output}")
 
     return np.array(execution_times)
-
-
-def analyze_execution_times(times):
-    mean_time = np.mean(times)
-    std_time = np.std(times, ddof=1)
-
-    # Removing outliers (greater than 3 standard deviations)
-    filtered_times = times[
-        (times > mean_time - 3 * std_time) & (times < mean_time + 3 * std_time)
-    ]
-    if len(times) - len(filtered_times) > 1:
-        print_warning("Too many emissions. Check your setup.")
-
-    normal_test = stats.normaltest(filtered_times)
-    shapiro_test = stats.shapiro(filtered_times)
-    if normal_test.pvalue < 0.05 and shapiro_test.pvalue < 0.05:
-        print_warning("Data does not pass normality tests. Check your setup.")
-
-    mean_time = np.mean(filtered_times)
-    confidence_interval = stats.t.ppf(0.975, df=len(filtered_times) - 1) * stats.sem(
-        filtered_times
-    )
-
-    return mean_time, confidence_interval
 
 
 def round_results(mean_time, confidence_interval):
@@ -100,10 +70,7 @@ def compare_output_images(filter: str, mode: str) -> bool:
 def main() -> None:
     data_file = open("tests/plots/benchmark_results.txt", "w+")
 
-    results = {
-        filter: {"means": [], "conf_inter": [], "perf_metrics": {}}
-        for filter in FILTERS
-    }
+    results = {filter: {"means": [], "conf_inter": []} for filter in FILTERS}
 
     # Run benchmarks for all filters and modes
     for filter in FILTERS:
@@ -113,7 +80,7 @@ def main() -> None:
             print(f"Running measurements: {filter} filter - {mode} mode")
             times = run_program(filter, mode)
 
-            mean_time, confidence_interval = analyze_execution_times(times)
+            mean_time, confidence_interval = analyze_execution_data(times)
             results[filter]["means"].append(mean_time)
             results[filter]["conf_inter"].append(confidence_interval)
 
@@ -162,7 +129,7 @@ def main() -> None:
             align="center",
             alpha=0.7,
             capsize=10,
-            color=(["#efa94a", "#47a76a", "#db5856", "#9966cc"] * len(FILTERS)),
+            color=(["#efa94a", "#47a76a", "#db5856", "#9966cc"]),
         )
         plt.xticks(x_pos, PARALLEL_MODES)
         plt.ylabel("Execution Time (s)")
