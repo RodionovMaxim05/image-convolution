@@ -45,19 +45,19 @@ int parallel_filter(struct image_rgb *input_image, struct image_rgb *output_imag
 int parallel_pixel(struct image_rgb *input_image, struct image_rgb *output_image,
 				   int width, int height, struct filter filter, int num_threads) {
 	return parallel_filter(input_image, output_image, width, height, filter,
-						   num_threads, 1, height);
+						   num_threads, 1, 1);
 }
 
 int parallel_row(struct image_rgb *input_image, struct image_rgb *output_image,
 				 int width, int height, struct filter filter, int num_threads) {
 	return parallel_filter(input_image, output_image, width, height, filter,
-						   num_threads, 1, height);
+						   num_threads, width, 1);
 }
 
 int parallel_column(struct image_rgb *input_image, struct image_rgb *output_image,
 					int width, int height, struct filter filter, int num_threads) {
 	return parallel_filter(input_image, output_image, width, height, filter,
-						   num_threads, width, 1);
+						   num_threads, 1, height);
 }
 
 int parallel_block(struct image_rgb *input_image, struct image_rgb *output_image,
