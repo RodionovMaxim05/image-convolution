@@ -1,0 +1,213 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+import re
+import filecmp
+
+# Configuration constants
+PROGRAM_PATH = "./build/src/image-convolution"
+IMAGE_NAME = "cat.bmp"
+IMAGE_PATH = "images/" + IMAGE_NAME
+OUTPUT_DIR = "tests/plots"
+NUM_RUNS = 40
+THREAD_NUM = 4
+
+PARALLEL_MODES = ["pixel", "row", "column", "block"]
+ALL_MODES = ["seq"] + PARALLEL_MODES
+
+FILTERS = ["id", "bl", "gbl", "mbl", "ed", "em"]
+FILTERS_INFO = [
+    "Identity Filter (3x3 kernel)",
+    "Standard Blur Filter (5x5 kernel)",
+    "Gaussian Blur Filter (5x5 kernel)",
+    "Motion Blur Filter (9x9 kernel)",
+    "Edge Detection Filter (3x3 kernel)",
+    "Emboss Filter (5x5 kernel)",
+]
+FILTERS_DICT = dict(zip(FILTERS, FILTERS_INFO))
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+def print_warning(message: str):
+    RED_ANSI = "\033[91m"
+    RESET_ANSI = "\033[0m"
+    print(f"{RED_ANSI}*** WARNING ***{RESET_ANSI}")
+    print(f"{RED_ANSI}{message}{RESET_ANSI}\n")
+
+
+def run_program(filter: str, mode: str):
+    execution_times = []
+
+    for _ in range(NUM_RUNS):
+        if mode == "seq":
+            command = f"{PROGRAM_PATH} {IMAGE_PATH} {filter} --mode={mode}"
+        else:
+            command = f"{PROGRAM_PATH} {IMAGE_PATH} {filter} --mode={mode} --thread={THREAD_NUM}"
+
+        output = os.popen(command).read().strip()
+        match = re.search(r"The convolution took (\d+\.\d+)", output)
+        if match:
+            time = float(match.group(1))
+            execution_times.append(time)
+        else:
+            print_warning(f"Failed to parse output: {output}")
+
+    return np.array(execution_times)
+
+
+def analyze_execution_times(times):
+    mean_time = np.mean(times)
+    std_time = np.std(times, ddof=1)
+
+    # Removing outliers (greater than 3 standard deviations)
+    filtered_times = times[
+        (times > mean_time - 3 * std_time) & (times < mean_time + 3 * std_time)
+    ]
+    if len(times) - len(filtered_times) > 1:
+        print_warning("Too many emissions. Check your setup.")
+
+    normal_test = stats.normaltest(filtered_times)
+    shapiro_test = stats.shapiro(filtered_times)
+    if normal_test.pvalue < 0.05 and shapiro_test.pvalue < 0.05:
+        print_warning("Data does not pass normality tests. Check your setup.")
+
+    mean_time = np.mean(filtered_times)
+    confidence_interval = stats.t.ppf(0.975, df=len(filtered_times) - 1) * stats.sem(
+        filtered_times
+    )
+
+    return mean_time, confidence_interval
+
+
+def round_results(mean_time, confidence_interval):
+    rounded_error = round(
+        confidence_interval, -int(np.floor(np.log10(abs(confidence_interval))))
+    )
+    rounded_mean = round(mean_time, -int(np.floor(np.log10(abs(rounded_error)))))
+
+    return rounded_mean, rounded_error
+
+
+def compare_output_images(filter: str, mode: str) -> bool:
+    output_file = f"images/{filter}_{mode}_{IMAGE_NAME}"
+    ref_file = f"images/{filter}_seq_{IMAGE_NAME}"
+
+    return filecmp.cmp(output_file, ref_file, shallow=False)
+
+
+def main() -> None:
+    data_file = open("tests/plots/benchmark_results.txt", "w+")
+
+    results = {
+        filter: {"means": [], "conf_inter": [], "perf_metrics": {}}
+        for filter in FILTERS
+    }
+
+    # Run benchmarks for all filters and modes
+    for filter in FILTERS:
+        data_file.write(f"FILTER: {FILTERS_DICT[filter]}\n\n")
+
+        for mode in ALL_MODES:
+            print(f"Running measurements: {filter} filter - {mode} mode")
+            times = run_program(filter, mode)
+
+            mean_time, confidence_interval = analyze_execution_times(times)
+            results[filter]["means"].append(mean_time)
+            results[filter]["conf_inter"].append(confidence_interval)
+
+            rounded_mean, rounded_error = round_results(mean_time, confidence_interval)
+
+            # Save benchmark results to a text file
+            data_file.write(f"\tMode: {mode}\n")
+            data_file.write(f"\t\tMean Time: {mean_time:.6f} s\n")
+            data_file.write(f"\t\tConfidence Interval: ±{confidence_interval:.6f} s\n")
+
+            # Compare with the reference file (sequential output)
+            if mode != "seq":
+                if compare_output_images(filter, mode):
+                    data_file.write(
+                        f"\t\tThe image is identical to the sequential output\n"
+                    )
+                else:
+                    data_file.write(
+                        f"WARNING: The image is NOT identical to the sequential output\n"
+                    )
+                    print_warning(f"Output mismatch for filter {filter} in mode {mode}")
+
+            data_file.write(f"\tResult: {rounded_mean} ± {rounded_error} s\n\n")
+
+        data_file.write("\n")
+
+        # Create a plot of the results of individual filters.
+
+        # mode 'seq' is not taken into account
+        x_pos = np.arange(len(PARALLEL_MODES))
+        filtered_means = [
+            results[filter]["means"][i]
+            for i, mode in enumerate(ALL_MODES)
+            if mode != "seq"
+        ]
+        filtered_errors = [
+            results[filter]["conf_inter"][i]
+            for i, mode in enumerate(ALL_MODES)
+            if mode != "seq"
+        ]
+
+        plt.bar(
+            x=x_pos,
+            height=filtered_means,
+            yerr=filtered_errors,
+            align="center",
+            alpha=0.7,
+            capsize=10,
+            color=(["#efa94a", "#47a76a", "#db5856", "#9966cc"] * len(FILTERS)),
+        )
+        plt.xticks(x_pos, PARALLEL_MODES)
+        plt.ylabel("Execution Time (s)")
+        plt.title(f"Execution Times for {FILTERS_DICT[filter]}")
+
+        individual_chart_path = os.path.join(OUTPUT_DIR, f"histogram_{filter}.png")
+        plt.tight_layout()
+        plt.savefig(individual_chart_path)
+        plt.clf()
+
+    data_file.close()
+
+    # Create a plot of of comparison chart.
+
+    bar_width = 0.15
+    x_pos = np.arange(len(FILTERS))
+    _, ax = plt.subplots(figsize=(12, 6))
+
+    # Plot bars for each mode
+    for i, mode in enumerate(ALL_MODES):
+        ax.bar(
+            x=(x_pos + i * bar_width),
+            height=[results[filter]["means"][i] for filter in FILTERS],
+            yerr=[results[filter]["conf_inter"][i] for filter in FILTERS],
+            width=bar_width,
+            label=mode,
+            align="center",
+            alpha=0.7,
+            capsize=5,
+        )
+
+    ax.set_xticks(x_pos + bar_width * (len(ALL_MODES) - 1) / 2)
+    ax.set_xticklabels(
+        [FILTERS_DICT[filter] for filter in FILTERS], rotation=45, ha="right"
+    )
+    ax.set_ylabel("Execution Time (s)")
+    ax.set_title("Performance Comparison of Different Filters and Modes")
+    ax.legend(title="Modes", loc="upper left", bbox_to_anchor=(1, 1))
+
+    grouped_chart_path = os.path.join(OUTPUT_DIR, "grouped_bar_chart.png")
+    plt.tight_layout()
+    plt.savefig(grouped_chart_path)
+
+    print(f"Measurements and charts saved to '{OUTPUT_DIR}' directory.")
+
+
+if __name__ == "__main__":
+    main()
