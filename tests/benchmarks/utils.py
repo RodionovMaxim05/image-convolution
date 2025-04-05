@@ -1,5 +1,15 @@
 import numpy as np
 from scipy import stats
+from PIL import Image
+
+
+def get_image_resolution(image_path: str) -> tuple[int, int]:
+    try:
+        with Image.open(image_path) as img:
+            width, height = img.size
+            return width, height
+    except Exception as e:
+        raise ValueError(f"Error loading {image_path}: {e}")
 
 
 def print_warning(message: str):

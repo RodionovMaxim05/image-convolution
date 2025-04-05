@@ -3,13 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import re
 import filecmp
-from utils import analyze_execution_data, print_warning
+import sys
+from utils import analyze_execution_data, print_warning, get_image_resolution
 
 # Configuration constants
 PROGRAM_PATH = "./build/src/image-convolution"
-IMAGE_NAME = "cat.bmp"
+IMAGE_NAME = sys.argv[1]
 IMAGE_PATH = "images/" + IMAGE_NAME
-OUTPUT_DIR = "tests/plots"
+IMAGE_RESOLUTION = get_image_resolution(IMAGE_PATH)
+OUTPUT_DIR = f"tests/plots/{IMAGE_RESOLUTION[0]}x{IMAGE_RESOLUTION[1]}"
 NUM_RUNS = 40
 THREAD_NUM = 4
 
@@ -68,7 +70,7 @@ def compare_output_images(filter: str, mode: str) -> bool:
 
 
 def main() -> None:
-    data_file = open("tests/plots/benchmark_results.txt", "w+")
+    data_file = open(f"{OUTPUT_DIR}/benchmark_results.txt", "w+")
 
     results = {filter: {"means": [], "conf_inter": []} for filter in FILTERS}
 
