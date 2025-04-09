@@ -32,6 +32,12 @@
 
 #define NUM_OF_FILTERS 7
 
+/**
+ * Represents metadata about a filter, including its name and description.
+ *
+ * @param name The name of the filter (e.g., "id", "fbl").
+ * @param description A brief description of the filter's purpose.
+ */
 typedef struct {
 	const char *name;
 	const char *description;
@@ -39,6 +45,15 @@ typedef struct {
 
 extern const FilterInfo filters_info[];
 
+/**
+ * Represents a convolution filter with its size, scaling factor, bias, and kernel.
+ *
+ * @param size Size of the filter kernel (e.g., 3 for a 3x3 kernel).
+ * @param factor Scaling factor applied to the convolution result.
+ * @param bias Bias added to the convolution result.
+ * @param kernel Pointer to a dynamically allocated 2D array representing the filter
+ * kernel.
+ */
 struct filter {
 	int size;
 	double factor;
@@ -54,7 +69,14 @@ extern const double motion_blur[9][9];
 extern const double edge_detection[3][3];
 extern const double emboss[5][5];
 
+/**
+ * Creates a convolution filter with the specified size, factor, bias, and kernel
+ * values.
+ */
 struct filter create_filter(int size, double factor, double bias,
 							const double values[size][size]);
 
+/**
+ * Frees the memory allocated for a filter's kernel.
+ */
 void free_filter(struct filter *f);

@@ -10,6 +10,9 @@ unsigned char test_image[] = {
 	0,	 0, 255, 255, 255, 255 // blue white
 };
 
+/**
+ * Tests the creation of a convolution filter using the `create_filter()` function.
+ */
 static void test_create_filter(void **state) {
 	(void)state;
 
@@ -29,6 +32,11 @@ static void test_create_filter(void **state) {
 	free_filter(&filter);
 }
 
+/**
+ * Tests the splitting of an image into RGB channels
+ * (`split_image_into_rgb_channels()`) and reassembling it back into a single image
+ * (`assemble_image_from_rgb_channels()`).
+ */
 static void test_split_assemble_channels(void **state) {
 	(void)state;
 
@@ -57,6 +65,9 @@ static void test_split_assemble_channels(void **state) {
 	free_image_rgb(&channel_image);
 }
 
+/**
+ * Tests the application of an identity filter to an image.
+ */
 static void test_identity_filter(void **state) {
 	(void)state;
 

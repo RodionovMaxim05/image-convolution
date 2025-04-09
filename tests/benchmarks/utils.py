@@ -4,6 +4,7 @@ from PIL import Image
 
 
 def get_image_resolution(image_path: str) -> tuple[int, int]:
+    """Retrieves the resolution (width and height) of an image file."""
     try:
         with Image.open(image_path) as img:
             width, height = img.size
@@ -13,6 +14,7 @@ def get_image_resolution(image_path: str) -> tuple[int, int]:
 
 
 def print_warning(message: str):
+    """Prints a formatted warning message in red text to the console."""
     RED_ANSI = "\033[91m"
     RESET_ANSI = "\033[0m"
     print(f"{RED_ANSI}*** WARNING ***{RESET_ANSI}")
@@ -20,6 +22,10 @@ def print_warning(message: str):
 
 
 def analyze_execution_data(data):
+    """
+    Analyzes execution time data to compute the mean execution time and its confidence interval
+    while performing outlier removal and normality testing.
+    """
     mean_time = np.mean(data)
     std_time = np.std(data, ddof=1)
 

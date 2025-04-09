@@ -5,6 +5,10 @@
 
 // Filter Inversion Tests
 
+/**
+ * Tests the inversion property of filters by applying two sequential filters
+ * (shift_right and shift_left) to a randomly generated image.
+ */
 static void test_filter_inverse_with_random_image(void **state) {
 	(void)state;
 
@@ -38,6 +42,10 @@ static void test_filter_inverse_with_random_image(void **state) {
 	free_filter(&filter_left);
 }
 
+/**
+ * Tests the inversion property of filters using a predefined default image
+ * (cat.bmp).
+ */
 static void test_filter_inverse_with_default_image(void **state) {
 	(void)state;
 
@@ -77,6 +85,10 @@ static void test_filter_inverse_with_default_image(void **state) {
 
 // Zero-based Filter Extension Tests
 
+/**
+ * Tests the zero-padding functionality by comparing the results of applying a small
+ * filter (fast_blur) and its zero-padded version to a randomly generated image.
+ */
 static void test_filter_zero_padding_with_random_image(void **state) {
 	(void)state;
 
@@ -111,6 +123,9 @@ static void test_filter_zero_padding_with_random_image(void **state) {
 	free_filter(&padded_filter);
 }
 
+/**
+ * Tests the zero-padding functionality using a predefined default image (cat.bmp).
+ */
 static void test_filter_zero_padding_with_default_image(void **state) {
 	(void)state;
 
