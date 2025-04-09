@@ -4,6 +4,8 @@ project(image-convolution LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_subdirectory(src)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")

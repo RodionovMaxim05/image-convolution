@@ -3,9 +3,9 @@
 #include "utils/utils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image/stb_image.h"
+#include "stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image/stb_image_write.h"
+#include "stb_image_write.h"
 
 #define MODE_PREFIX_LEN 7
 #define THREAD_PREFIX_LEN 9
@@ -35,8 +35,7 @@ int main(int argc, char *argv[]) {
 			  "  --default-image        Use a predefined default image.\n"
 			  "  <filter_name>          Name of the filter to apply ().\n"
 			  "  --mode=<mode>          Execution mode: 'seq' for sequential or "
-			  "'row', 'column', 'block', 'pixel' "
-			  "for parallel.\n"
+			  "'row', 'column', 'block', 'pixel' for parallel.\n"
 			  "  --thread=<num>         Number of threads to use in parallel mode "
 			  "(ignored if --mode=seq).\n\n"
 			  "Available Filters:\n",
@@ -133,6 +132,10 @@ int main(int argc, char *argv[]) {
 
 	int return_value = 0;
 	double start_time = get_time_in_seconds();
+	if (handle_error(start_time == -1, "Error in clock_gettime().\n")) {
+		goto cleanup_and_err;
+	}
+
 	if (strcmp(mode_str, "row") == 0) {
 		return_value = parallel_row(&channel_image, &result_channel_image, width,
 									height, image_filter, threads_num);
@@ -154,6 +157,9 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	double end_time = get_time_in_seconds();
+	if (handle_error(end_time == -1, "Error in clock_gettime().\n")) {
+		goto cleanup_and_err;
+	}
 
 	if (handle_error(return_value != 0, "Failed to create thread.\n")) {
 		goto cleanup_and_err;

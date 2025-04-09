@@ -1,6 +1,6 @@
 #include "utils.h"
 
-#define MICROSECONDS_IN_SECOND 1000000.0
+#define NANOSECONDS_IN_SECOND 1e9
 
 void free_image_rgb(struct image_rgb *image) {
 	free(image->red);
@@ -58,8 +58,10 @@ const char *extract_filename(const char *path) {
 }
 
 double get_time_in_seconds(void) {
-	struct timeval time;
-	gettimeofday(&time, NULL);
+	struct timespec time;
+	if (clock_gettime(CLOCK_MONOTONIC, &time) != 0) {
+		return -1;
+	}
 
-	return (double)time.tv_sec + (double)time.tv_usec / MICROSECONDS_IN_SECOND;
+	return (double)time.tv_sec + (double)time.tv_nsec / NANOSECONDS_IN_SECOND;
 }
