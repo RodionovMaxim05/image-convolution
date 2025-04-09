@@ -13,6 +13,13 @@
 #define UNDERSCORE_COUNT 2		 // Number of underscores
 #define NULL_TERMINATOR_LENGTH 1 // Terminating null character '\0'
 
+typedef struct {
+	const char *image_path;
+	const char *filter_name;
+	const char *mode;
+	int threads_num;
+} ProgramArgs;
+
 static inline bool handle_error(bool condition, const char *message, ...) {
 	if (condition) {
 		va_list args;
@@ -24,7 +31,7 @@ static inline bool handle_error(bool condition, const char *message, ...) {
 	return false;
 }
 
-int main(int argc, char *argv[]) {
+static bool parse_args(int argc, char *argv[], ProgramArgs *args) {
 	if (argc < 4) {
 		error("Usage:\n"
 			  "  %s <image_path | --default-image> <filter_name> --mode=<mode> "
@@ -43,6 +50,33 @@ int main(int argc, char *argv[]) {
 		for (int i = 0; i < NUM_OF_FILTERS; i++) {
 			error("  %-22s %s\n", filters_info[i].name, filters_info[i].description);
 		}
+		return false;
+	}
+
+	args->image_path =
+		strcmp(argv[1], "--default-image") == 0 ? "images/cat.bmp" : argv[1];
+	args->filter_name = argv[2];
+
+	if (strncmp(argv[3], "--mode=", MODE_PREFIX_LEN) != 0) {
+		handle_error(true, "Missing --mode argument\n");
+		return false;
+	}
+	args->mode = argv[3] + MODE_PREFIX_LEN;
+
+	if (strcmp(args->mode, "seq") != 0) {
+		if (strncmp(argv[4], "--thread=", THREAD_PREFIX_LEN) != 0) {
+			handle_error(true, "Missing --thread argument\n");
+			return false;
+		}
+		args->threads_num = atoi(argv[4] + THREAD_PREFIX_LEN);
+	}
+
+	return true;
+}
+
+int main(int argc, char *argv[]) {
+	ProgramArgs args = {NULL, NULL, NULL, 1};
+	if (!parse_args(argc, argv, &args)) {
 		return -1;
 	}
 
@@ -54,35 +88,13 @@ int main(int argc, char *argv[]) {
 	unsigned char *result_image = NULL;
 	char *output_file_path = NULL;
 
-	const char *image_path =
-		strcmp(argv[1], "--default-image") == 0 ? "images/cat.bmp" : argv[1];
-
-	image = stbi_load(image_path, &width, &height, &channels, 3);
+	// Load image
+	image = stbi_load(args.image_path, &width, &height, &channels, 3);
 	if (handle_error(!image, "Could not open or find the image!\n")) {
 		goto cleanup_and_err;
 	}
 
-	const char *file_name = extract_filename(image_path);
-	const char *filter_name = argv[2];
-
-	char *mode_str = NULL;
-	int threads_num = 0;
-	if (strncmp(argv[3], "--mode=", MODE_PREFIX_LEN) == 0) {
-		mode_str = argv[3] + MODE_PREFIX_LEN;
-
-		if (strcmp(mode_str, "seq") != 0) {
-			if (handle_error(strncmp(argv[4], "--thread=", THREAD_PREFIX_LEN) != 0,
-							 "Missing --thread argument\n")) {
-				goto cleanup_and_err;
-			};
-			threads_num = atoi(argv[4] + THREAD_PREFIX_LEN);
-		}
-	} else {
-		if (handle_error(1, "Missing --mode argument\n")) {
-			goto cleanup_and_err;
-		}
-	}
-
+	// Initialize RGB channels
 	channel_image = initialize_image_rgb(width, height);
 	if (handle_error(channel_image.red == NULL || channel_image.green == NULL ||
 						 channel_image.blue == NULL,
@@ -92,27 +104,28 @@ int main(int argc, char *argv[]) {
 
 	split_image_into_rgb_channels(image, channel_image, width, height);
 
-	if (strcmp(filter_name, "id") == 0) {
+	// Create filter
+	if (strcmp(args.filter_name, "id") == 0) {
 		image_filter = create_filter(ID_SIZE, ID_FACTOR, ID_BIAS, id);
-	} else if (strcmp(filter_name, "fbl") == 0) {
+	} else if (strcmp(args.filter_name, "fbl") == 0) {
 		image_filter = create_filter(FAST_BLUR_SIZE, FAST_BLUR_FACTOR,
 									 FAST_BLUR_BIAS, fast_blur);
-	} else if (strcmp(filter_name, "bl") == 0) {
+	} else if (strcmp(args.filter_name, "bl") == 0) {
 		image_filter = create_filter(BLUR_SIZE, BLUR_FACTOR, BLUR_BIAS, blur);
-	} else if (strcmp(filter_name, "gbl") == 0) {
+	} else if (strcmp(args.filter_name, "gbl") == 0) {
 		image_filter = create_filter(GAUS_BLUR_SIZE, GAUS_BLUR_FACTOR,
 									 GAUS_BLUR_BIAS, gaus_blur);
-	} else if (strcmp(filter_name, "mbl") == 0) {
+	} else if (strcmp(args.filter_name, "mbl") == 0) {
 		image_filter = create_filter(MOTION_BLUR_SIZE, MOTION_BLUR_FACTOR,
 									 MOTION_BLUR_BIAS, motion_blur);
-	} else if (strcmp(filter_name, "ed") == 0) {
+	} else if (strcmp(args.filter_name, "ed") == 0) {
 		image_filter = create_filter(EDGE_DETECTION_SIZE, EDGE_DETECTION_FACTOR,
 									 EDGE_DETECTION_BIAS, edge_detection);
-	} else if (strcmp(filter_name, "em") == 0) {
+	} else if (strcmp(args.filter_name, "em") == 0) {
 		image_filter =
 			create_filter(EMBOSS_SIZE, EMBOSS_FACTOR, EMBOSS_BIAS, emboss);
 	} else {
-		if (handle_error(1, "Unknown filter name: %s\n", filter_name)) {
+		if (handle_error(1, "Unknown filter name: %s\n", args.filter_name)) {
 			goto cleanup_and_err;
 		}
 	}
@@ -122,6 +135,7 @@ int main(int argc, char *argv[]) {
 		goto cleanup_and_err;
 	}
 
+	// Initialize result channels
 	result_channel_image = initialize_image_rgb(width, height);
 	if (handle_error(result_channel_image.red == NULL ||
 						 result_channel_image.green == NULL ||
@@ -130,32 +144,34 @@ int main(int argc, char *argv[]) {
 		goto cleanup_and_err;
 	}
 
-	int return_value = 0;
+	// Apply convolution
 	double start_time = get_time_in_seconds();
 	if (handle_error(start_time == -1, "Error in clock_gettime().\n")) {
 		goto cleanup_and_err;
 	}
 
-	if (strcmp(mode_str, "row") == 0) {
+	int return_value = 0;
+	if (strcmp(args.mode, "row") == 0) {
 		return_value = parallel_row(&channel_image, &result_channel_image, width,
-									height, image_filter, threads_num);
-	} else if (strcmp(mode_str, "column") == 0) {
+									height, image_filter, args.threads_num);
+	} else if (strcmp(args.mode, "column") == 0) {
 		return_value = parallel_column(&channel_image, &result_channel_image, width,
-									   height, image_filter, threads_num);
-	} else if (strcmp(mode_str, "block") == 0) {
+									   height, image_filter, args.threads_num);
+	} else if (strcmp(args.mode, "block") == 0) {
 		return_value = parallel_block(&channel_image, &result_channel_image, width,
-									  height, image_filter, threads_num);
-	} else if (strcmp(mode_str, "pixel") == 0) {
+									  height, image_filter, args.threads_num);
+	} else if (strcmp(args.mode, "pixel") == 0) {
 		return_value = parallel_pixel(&channel_image, &result_channel_image, width,
-									  height, image_filter, threads_num);
-	} else if (strcmp(mode_str, "seq") == 0) {
+									  height, image_filter, args.threads_num);
+	} else if (strcmp(args.mode, "seq") == 0) {
 		sequential_application(&channel_image, &result_channel_image, width, height,
 							   image_filter);
 	} else {
-		if (handle_error(1, "Unknown mode name: %s\n", mode_str)) {
+		if (handle_error(1, "Unknown mode name: %s\n", args.mode)) {
 			goto cleanup_and_err;
 		}
 	}
+
 	double end_time = get_time_in_seconds();
 	if (handle_error(end_time == -1, "Error in clock_gettime().\n")) {
 		goto cleanup_and_err;
@@ -165,6 +181,7 @@ int main(int argc, char *argv[]) {
 		goto cleanup_and_err;
 	}
 
+	// Assemble and save result
 	result_image = malloc((size_t)width * (size_t)height * (size_t)channels);
 	if (handle_error(result_image == NULL,
 					 "Memory allocation error for result_image.\n")) {
@@ -174,15 +191,17 @@ int main(int argc, char *argv[]) {
 	assemble_image_from_rgb_channels(result_image, result_channel_image, width,
 									 height);
 
-	output_file_path =
-		malloc(PATH_PREFIX_LENGTH + UNDERSCORE_COUNT + strlen(file_name) +
-			   strlen(mode_str) + strlen(filter_name) + NULL_TERMINATOR_LENGTH);
+	const char *file_name = extract_filename(args.image_path);
+	output_file_path = malloc(PATH_PREFIX_LENGTH + UNDERSCORE_COUNT +
+							  strlen(file_name) + strlen(args.mode) +
+							  strlen(args.filter_name) + NULL_TERMINATOR_LENGTH);
 	if (handle_error(output_file_path == NULL,
 					 "Memory allocation error for output_file_path.\n")) {
 		goto cleanup_and_err;
 	}
 
-	sprintf(output_file_path, "images/%s_%s_%s", filter_name, mode_str, file_name);
+	sprintf(output_file_path, "images/%s_%s_%s", args.filter_name, args.mode,
+			file_name);
 
 	stbi_write_bmp(output_file_path, width, height, 3, result_image);
 
@@ -205,12 +224,8 @@ cleanup_and_err:
 	free_image_rgb(&channel_image);
 	free_image_rgb(&result_channel_image);
 	free_filter(&image_filter);
-	if (result_image) {
-		free(result_image);
-	}
-	if (output_file_path) {
-		free(output_file_path);
-	}
+	free(result_image);
+	free(output_file_path);
 
 	return -1;
 }
