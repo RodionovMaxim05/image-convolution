@@ -1,5 +1,7 @@
 #include "parallel_dispatch.h"
 
+// A helper function that implements parallel filter application using dynamic block
+// assignment.
 int parallel_filter(struct image_rgb *input_image, struct image_rgb *output_image,
 					int width, int height, struct filter filter, int num_threads,
 					int block_width, int block_height) {

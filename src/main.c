@@ -13,6 +13,15 @@
 #define UNDERSCORE_COUNT 2		 // Number of underscores
 #define NULL_TERMINATOR_LENGTH 1 // Terminating null character '\0'
 
+/**
+ * A structure to store the parsed command-line arguments.
+ *
+ * @param image_path Path to the input image file or "images/cat.bmp" if
+--default-image is specified.
+ * @param filter_name Name of the filter to apply.
+ * @param mode Execution mode ("seq", "row", "column", "block", or "pixel").
+ * @param threads_num Number of threads to use in parallel modes (ignored for "seq").
+ */
 typedef struct {
 	const char *image_path;
 	const char *filter_name;
@@ -20,6 +29,10 @@ typedef struct {
 	int threads_num;
 } ProgramArgs;
 
+/**
+ * Handles runtime errors by printing an error message (using error) if the specified
+ * condition is true.
+ */
 static inline bool handle_error(bool condition, const char *message, ...) {
 	if (condition) {
 		va_list args;
@@ -31,6 +44,10 @@ static inline bool handle_error(bool condition, const char *message, ...) {
 	return false;
 }
 
+/**
+ * Parses the command-line arguments provided to the program. It validates the input
+ * and populates the ProgramArgs structure with the parsed values.
+ */
 static bool parse_args(int argc, char *argv[], ProgramArgs *args) {
 	if (argc < 4) {
 		error("Usage:\n"
@@ -74,6 +91,10 @@ static bool parse_args(int argc, char *argv[], ProgramArgs *args) {
 	return true;
 }
 
+/**
+ * The entry point of the program. It organizes the entire process of loading an
+ * image, applying a convolution filter, and saving the result.
+ */
 int main(int argc, char *argv[]) {
 	ProgramArgs args = {NULL, NULL, NULL, 1};
 	if (!parse_args(argc, argv, &args)) {

@@ -2,12 +2,6 @@
 
 #define NANOSECONDS_IN_SECOND 1e9
 
-void free_image_rgb(struct image_rgb *image) {
-	free(image->red);
-	free(image->green);
-	free(image->blue);
-}
-
 struct image_rgb initialize_image_rgb(int width, int height) {
 	struct image_rgb channel_image;
 
@@ -24,6 +18,12 @@ struct image_rgb initialize_image_rgb(int width, int height) {
 	}
 
 	return channel_image;
+}
+
+void free_image_rgb(struct image_rgb *image) {
+	free(image->red);
+	free(image->green);
+	free(image->blue);
 }
 
 void split_image_into_rgb_channels(const unsigned char *image,

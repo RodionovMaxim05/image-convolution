@@ -3,6 +3,11 @@
 
 #include "utils_for_tests.c"
 
+/**
+ * A helper function that runs a parallel test for a given parallel implementation
+ * (parallel_function). It compares the results of the parallel implementation with
+ * those of the sequential implementation to ensure correctness.
+ */
 static void run_test_with_filter(
 	int (*parallel_function)(struct image_rgb *, struct image_rgb *, int, int,
 							 struct filter, int), // a little bit fp 🫠
@@ -29,6 +34,10 @@ static void run_test_with_filter(
 	free_filter(&filter);
 }
 
+/**
+ * Tests the `parallel_pixel()` implementation using a predefined default image
+ * (cat.bmp).
+ */
 static void test_parallel_pixel_with_default_image(void **state) {
 	(void)state;
 
@@ -45,6 +54,9 @@ static void test_parallel_pixel_with_default_image(void **state) {
 	stbi_image_free(image);
 }
 
+/**
+ * Tests the `parallel_pixel()` implementation using a randomly generated image.
+ */
 static void test_parallel_pixel_with_random_image(void **state) {
 	(void)state;
 
@@ -56,6 +68,10 @@ static void test_parallel_pixel_with_random_image(void **state) {
 	run_test_with_filter(parallel_pixel, &channel_image, width, height, 3);
 }
 
+/**
+ * Tests the `parallel_row()` implementation using a predefined default image
+ * (cat.bmp).
+ */
 static void test_parallel_row_with_default_image(void **state) {
 	(void)state;
 
@@ -72,6 +88,9 @@ static void test_parallel_row_with_default_image(void **state) {
 	stbi_image_free(image);
 }
 
+/**
+ * Tests the `parallel_row()` implementation using a randomly generated image
+ */
 static void test_parallel_row_with_random_image(void **state) {
 	(void)state;
 
@@ -83,6 +102,10 @@ static void test_parallel_row_with_random_image(void **state) {
 	run_test_with_filter(parallel_row, &channel_image, width, height, 3);
 }
 
+/**
+ * Tests the `parallel_column()` implementation using a predefined default image
+ * (cat.bmp).
+ */
 static void test_parallel_column_with_default_image(void **state) {
 	(void)state;
 
@@ -99,6 +122,9 @@ static void test_parallel_column_with_default_image(void **state) {
 	stbi_image_free(image);
 }
 
+/**
+ * Tests the `parallel_column()` implementation using a randomly generated image.
+ */
 static void test_parallel_column_with_random_image(void **state) {
 	(void)state;
 
@@ -110,6 +136,10 @@ static void test_parallel_column_with_random_image(void **state) {
 	run_test_with_filter(parallel_column, &channel_image, width, height, 3);
 }
 
+/**
+ * Tests the `parallel_block()` implementation using a predefined default image
+ * (cat.bmp).
+ */
 static void test_parallel_block_with_default_image(void **state) {
 	(void)state;
 
@@ -126,6 +156,9 @@ static void test_parallel_block_with_default_image(void **state) {
 	stbi_image_free(image);
 }
 
+/**
+ * Tests the `parallel_block()` implementation using a randomly generated image.
+ */
 static void test_parallel_block_with_random_image(void **state) {
 	(void)state;
 

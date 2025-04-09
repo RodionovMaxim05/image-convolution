@@ -40,13 +40,6 @@ const double emboss[5][5] = {{-1, -1, -1, -1, 0},
 							 {-1, 0, 1, 1, 1},
 							 {0, 1, 1, 1, 1}};
 
-void free_filter(struct filter *filter) {
-	for (int i = 0; i < filter->size; i++) {
-		free(filter->kernel[i]);
-	}
-	free((void *)filter->kernel);
-}
-
 struct filter create_filter(int size, double factor, double bias,
 							const double values[size][size]) {
 	struct filter filter;
@@ -77,4 +70,11 @@ struct filter create_filter(int size, double factor, double bias,
 	}
 
 	return filter;
+}
+
+void free_filter(struct filter *filter) {
+	for (int i = 0; i < filter->size; i++) {
+		free(filter->kernel[i]);
+	}
+	free((void *)filter->kernel);
 }

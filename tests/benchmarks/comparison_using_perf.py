@@ -21,6 +21,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def run_perf_stat(mode: str):
+    """Runs the `perf stat` command to measure performance metrics for a specific execution mode."""
     c_ref, c_mis, l1_mis = [], [], []
     if mode == "seq":
         command = f"perf stat -e cache-references,cache-misses,L1-dcache-load-misses {PROGRAM_PATH} {IMAGE_PATH} id --mode={mode}"
@@ -56,6 +57,10 @@ def run_perf_stat(mode: str):
 
 
 def main() -> None:
+    """
+    The core function organizes the performance measurement process,
+    including running tests, analyzing results, storing results, and creating graphs.
+    """
     results = {
         "cache-references": {"means": [], "conf_inter": []},
         "cache-misses": {"means": [], "conf_inter": []},

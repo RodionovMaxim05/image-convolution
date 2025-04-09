@@ -14,6 +14,10 @@
 #include "sequential_tests.c"
 #include "unit_tests.c"
 
+/**
+ * The main function initializes the random number generator using the current time
+ * and runs all test groups sequentially.
+ */
 int main(void) {
 	srand((unsigned int)time(NULL));
 
