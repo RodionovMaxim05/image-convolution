@@ -39,6 +39,12 @@ struct thread_data {
 
 /**
  * Applies a convolution filter sequentially to an image.
+ *
+ * @param input_image Pointer to the input image (`struct image_rgb`).
+ * @param output_image Pointer to the output image (`struct image_rgb`).
+ * @param width Width of the image.
+ * @param height Height of the image.
+ * @param filter The convolution filter to be applied.
  */
 void sequential_application(struct image_rgb *input_image,
 							struct image_rgb *output_image, int width, int height,
@@ -46,5 +52,8 @@ void sequential_application(struct image_rgb *input_image,
 
 /**
  * Processes image blocks dynamically in a parallel execution environment.
+ *
+ * @param arg A pointer to a `struct thread_data` containing the thread's processing
+ * data.
  */
 void *process_dynamic(void *arg);
