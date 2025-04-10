@@ -21,7 +21,18 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def run_perf_stat(mode: str):
-    """Runs the `perf stat` command to measure performance metrics for a specific execution mode."""
+    """
+    Runs the `perf stat` command to measure performance metrics for a specific execution mode.
+
+    Args:
+        mode (str): Execution mode.
+
+    Returns:
+        A tuple (c_ref, c_mis, l1_mis) containing NumPy arrays of:
+            c_ref: Cache references.
+            c_mis: Cache misses.
+            l1_mis: L1 data cache load misses.
+    """
     c_ref, c_mis, l1_mis = [], [], []
     if mode == "seq":
         command = f"perf stat -e cache-references,cache-misses,L1-dcache-load-misses {PROGRAM_PATH} {IMAGE_PATH} id --mode={mode}"

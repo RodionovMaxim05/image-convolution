@@ -4,7 +4,15 @@ from PIL import Image
 
 
 def get_image_resolution(image_path: str) -> tuple[int, int]:
-    """Retrieves the resolution (width and height) of an image file."""
+    """
+    Retrieves the resolution (width and height) of an image file.
+
+    Args:
+        image_path (str): The file path to the image.
+
+    Returns:
+        A tuple (width, height) representing the image resolution in pixels.
+    """
     try:
         with Image.open(image_path) as img:
             width, height = img.size
@@ -14,7 +22,12 @@ def get_image_resolution(image_path: str) -> tuple[int, int]:
 
 
 def print_warning(message: str):
-    """Prints a formatted warning message in red text to the console."""
+    """
+    Prints a formatted warning message in red text to the console.
+
+    Args:
+        message (str): The warning message to display.
+    """
     RED_ANSI = "\033[91m"
     RESET_ANSI = "\033[0m"
     print(f"{RED_ANSI}*** WARNING ***{RESET_ANSI}")
@@ -25,6 +38,14 @@ def analyze_execution_data(data):
     """
     Analyzes execution time data to compute the mean execution time and its confidence interval
     while performing outlier removal and normality testing.
+
+    Args:
+        data (array): A list or array of execution times.
+
+    Returns:
+        A tuple (mean_time, confidence_interval):
+            mean_time (float): The mean execution time after filtering outliers.
+            confidence_interval (float): The 95% confidence interval for the mean.
     """
     mean_time = np.mean(data)
     std_time = np.std(data, ddof=1)

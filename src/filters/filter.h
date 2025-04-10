@@ -72,11 +72,21 @@ extern const double emboss[5][5];
 /**
  * Creates a convolution filter with the specified size, factor, bias, and kernel
  * values.
+ *
+ * @param size Size of the filter kernel (e.g., 3 for a 3x3 kernel).
+ * @param factor Scaling factor for the convolution result.
+ * @param bias Bias added to the convolution result.
+ * @param kernel: A 2D array containing the kernel values.
+ *
+ * @return A `struct filter` with the specified properties. If memory allocation
+ * fails, returns an empty filter `{0, 0.0, 0.0, NULL}`.
  */
 struct filter create_filter(int size, double factor, double bias,
 							const double values[size][size]);
 
 /**
  * Frees the memory allocated for a filter's kernel.
+ *
+ * @param filter Pointer to the `struct filter` whose memory needs to be freed.
  */
 void free_filter(struct filter *f);

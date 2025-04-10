@@ -32,6 +32,13 @@ typedef struct {
 /**
  * Handles runtime errors by printing an error message (using error) if the specified
  * condition is true.
+ *
+ * @param condition A boolean value indicating whether an error has occurred.
+ * @param message String describing the error.
+ * @param ... Additional arguments for formatting the error message.
+ *
+ * @return `true` if the condition is true (indicating an error occurred), `false`
+ * otherwise.
  */
 static inline bool handle_error(bool condition, const char *message, ...) {
 	if (condition) {
@@ -47,6 +54,13 @@ static inline bool handle_error(bool condition, const char *message, ...) {
 /**
  * Parses the command-line arguments provided to the program. It validates the input
  * and populates the ProgramArgs structure with the parsed values.
+ *
+ * @param argc The number of command-line arguments.
+ * @param argv An array of strings containing the command-line arguments.
+ * @param args A pointer to a `ProgramArgs` structure where the parsed arguments will
+ * be stored.
+ *
+ * @return `true` if parsing is successful, `false` if there is an error.
  */
 static bool parse_args(int argc, char *argv[], ProgramArgs *args) {
 	if (argc < 4) {

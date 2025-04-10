@@ -7,6 +7,13 @@
  * A helper function that runs a parallel test for a given parallel implementation
  * (parallel_function). It compares the results of the parallel implementation with
  * those of the sequential implementation to ensure correctness.
+ *
+ * @param parallel_function A pointer to the parallel implementation being tested
+(e.g., `parallel_pixel`, `parallel_row`).
+ * @param channel_image Pointer to the input image's RGB channels.
+ * @param width Width of the image.
+ * @param height Height of the image.
+ * @param num_threads Number of threads to use for parallel processing.
  */
 static void run_test_with_filter(
 	int (*parallel_function)(struct image_rgb *, struct image_rgb *, int, int,
