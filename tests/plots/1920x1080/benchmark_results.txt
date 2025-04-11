@@ -1,192 +1,108 @@
 FILTER: Identity Filter (3x3 kernel)
 
 	Mode: seq
-		Mean Time: 0.224915 s
-		Confidence Interval: ±0.001155 s
-	Result: 0.225 ± 0.001 s
-
+		Result: 0.2244 ± 0.0009 s
 	Mode: pixel
-		Mean Time: 0.139663 s
-		Confidence Interval: ±0.001227 s
+		Result: 0.138 ± 0.001 s
 		The image is identical to the sequential output
-	Result: 0.14 ± 0.001 s
-
 	Mode: row
-		Mean Time: 0.064388 s
-		Confidence Interval: ±0.000221 s
+		Result: 0.0642 ± 0.0001 s
 		The image is identical to the sequential output
-	Result: 0.0644 ± 0.0002 s
-
 	Mode: column
-		Mean Time: 0.070354 s
-		Confidence Interval: ±0.000294 s
+		Result: 0.07011 ± 7e-05 s
 		The image is identical to the sequential output
-	Result: 0.0704 ± 0.0003 s
-
 	Mode: block
-		Mean Time: 0.065069 s
-		Confidence Interval: ±0.000658 s
+		Result: 0.0651 ± 0.0007 s
 		The image is identical to the sequential output
-	Result: 0.0651 ± 0.0007 s
 
 
 FILTER: Standard Blur Filter (5x5 kernel)
 
 	Mode: seq
-		Mean Time: 0.561812 s
-		Confidence Interval: ±0.000277 s
-	Result: 0.5618 ± 0.0003 s
-
+		Result: 0.5628 ± 0.0005 s
 	Mode: pixel
-		Mean Time: 0.228790 s
-		Confidence Interval: ±0.000726 s
+		Result: 0.229 ± 0.001 s
 		The image is identical to the sequential output
-	Result: 0.2288 ± 0.0007 s
-
 	Mode: row
-		Mean Time: 0.164730 s
-		Confidence Interval: ±0.000384 s
+		Result: 0.1646 ± 0.0003 s
 		The image is identical to the sequential output
-	Result: 0.1647 ± 0.0004 s
-
 	Mode: column
-		Mean Time: 0.172578 s
-		Confidence Interval: ±0.000353 s
+		Result: 0.1728 ± 0.0004 s
 		The image is identical to the sequential output
-	Result: 0.1726 ± 0.0004 s
-
 	Mode: block
-		Mean Time: 0.166417 s
-		Confidence Interval: ±0.001683 s
+		Result: 0.1653 ± 0.0009 s
 		The image is identical to the sequential output
-	Result: 0.166 ± 0.002 s
 
 
 FILTER: Gaussian Blur Filter (5x5 kernel)
 
 	Mode: seq
-		Mean Time: 0.561177 s
-		Confidence Interval: ±0.000566 s
-	Result: 0.5612 ± 0.0006 s
-
+		Result: 0.5629 ± 0.0004 s
 	Mode: pixel
-		Mean Time: 0.228298 s
-		Confidence Interval: ±0.000721 s
+		Result: 0.229 ± 0.0009 s
 		The image is identical to the sequential output
-	Result: 0.2283 ± 0.0007 s
-
 	Mode: row
-		Mean Time: 0.164347 s
-		Confidence Interval: ±0.000158 s
+		Result: 0.1648 ± 0.0003 s
 		The image is identical to the sequential output
-	Result: 0.1643 ± 0.0002 s
-
 	Mode: column
-		Mean Time: 0.172742 s
-		Confidence Interval: ±0.000417 s
+		Result: 0.1733 ± 0.0006 s
 		The image is identical to the sequential output
-	Result: 0.1727 ± 0.0004 s
-
 	Mode: block
-		Mean Time: 0.166845 s
-		Confidence Interval: ±0.002015 s
+		Result: 0.1649 ± 0.0008 s
 		The image is identical to the sequential output
-	Result: 0.167 ± 0.002 s
 
 
 FILTER: Motion Blur Filter (9x9 kernel)
 
 	Mode: seq
-		Mean Time: 1.691606 s
-		Confidence Interval: ±0.003060 s
-	Result: 1.692 ± 0.003 s
-
+		Result: 1.6911 ± 0.0008 s
 	Mode: pixel
-		Mean Time: 0.569037 s
-		Confidence Interval: ±0.000838 s
+		Result: 0.571 ± 0.002 s
 		The image is identical to the sequential output
-	Result: 0.569 ± 0.0008 s
-
 	Mode: row
-		Mean Time: 0.515284 s
-		Confidence Interval: ±0.001529 s
+		Result: 0.5136 ± 0.0006 s
 		The image is identical to the sequential output
-	Result: 0.515 ± 0.002 s
-
 	Mode: column
-		Mean Time: 0.528574 s
-		Confidence Interval: ±0.001727 s
+		Result: 0.529 ± 0.002 s
 		The image is identical to the sequential output
-	Result: 0.529 ± 0.002 s
-
 	Mode: block
-		Mean Time: 0.515068 s
-		Confidence Interval: ±0.002456 s
+		Result: 0.515 ± 0.002 s
 		The image is identical to the sequential output
-	Result: 0.515 ± 0.002 s
 
 
 FILTER: Edge Detection Filter (3x3 kernel)
 
 	Mode: seq
-		Mean Time: 0.231475 s
-		Confidence Interval: ±0.000255 s
-	Result: 0.2315 ± 0.0003 s
-
+		Result: 0.2302 ± 0.0005 s
 	Mode: pixel
-		Mean Time: 0.137543 s
-		Confidence Interval: ±0.001090 s
+		Result: 0.137 ± 0.001 s
 		The image is identical to the sequential output
-	Result: 0.138 ± 0.001 s
-
 	Mode: row
-		Mean Time: 0.064189 s
-		Confidence Interval: ±0.000149 s
+		Result: 0.0642 ± 0.0001 s
 		The image is identical to the sequential output
-	Result: 0.0642 ± 0.0001 s
-
 	Mode: column
-		Mean Time: 0.070125 s
-		Confidence Interval: ±0.000129 s
+		Result: 0.07009 ± 9e-05 s
 		The image is identical to the sequential output
-	Result: 0.0701 ± 0.0001 s
-
 	Mode: block
-		Mean Time: 0.064535 s
-		Confidence Interval: ±0.000236 s
+		Result: 0.0649 ± 0.0005 s
 		The image is identical to the sequential output
-	Result: 0.0645 ± 0.0002 s
 
 
 FILTER: Emboss Filter (5x5 kernel)
 
 	Mode: seq
-		Mean Time: 0.561978 s
-		Confidence Interval: ±0.001558 s
-	Result: 0.562 ± 0.002 s
-
+		Result: 0.5632 ± 0.0003 s
 	Mode: pixel
-		Mean Time: 0.227790 s
-		Confidence Interval: ±0.000473 s
+		Result: 0.229 ± 0.001 s
 		The image is identical to the sequential output
-	Result: 0.2278 ± 0.0005 s
-
 	Mode: row
-		Mean Time: 0.164533 s
-		Confidence Interval: ±0.000099 s
+		Result: 0.165 ± 0.0004 s
 		The image is identical to the sequential output
-	Result: 0.1645 ± 0.0001 s
-
 	Mode: column
-		Mean Time: 0.173507 s
-		Confidence Interval: ±0.000658 s
+		Result: 0.1726 ± 0.0002 s
 		The image is identical to the sequential output
-	Result: 0.1735 ± 0.0007 s
-
 	Mode: block
-		Mean Time: 0.165996 s
-		Confidence Interval: ±0.001512 s
+		Result: 0.166 ± 0.001 s
 		The image is identical to the sequential output
-	Result: 0.166 ± 0.002 s
 
 

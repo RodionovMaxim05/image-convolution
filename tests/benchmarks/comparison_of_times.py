@@ -125,10 +125,7 @@ def main() -> None:
 
             # Save benchmark results to a text file
             data_file.write(f"\tMode: {mode}\n")
-            data_file.write(f"\t\tMean Time: {mean_time:.6f} s\n")
-            data_file.write(
-                f"\t\tConfidence Interval: ±{confidence_interval:.6f} s\n"
-            )
+            data_file.write(f"\t\tResult: {rounded_mean} ± {rounded_error} s\n")
 
             # Compare with the reference file (sequential output)
             if mode != "seq":
@@ -144,9 +141,7 @@ def main() -> None:
                         f"Output mismatch for filter {filter} in mode {mode}"
                     )
 
-            data_file.write(f"\tResult: {rounded_mean} ± {rounded_error} s\n\n")
-
-        data_file.write("\n")
+        data_file.write("\n\n")
 
         # Create a plot of the results of individual filters.
 

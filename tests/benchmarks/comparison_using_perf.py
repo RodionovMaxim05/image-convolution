@@ -72,6 +72,8 @@ def main() -> None:
     The core function organizes the performance measurement process,
     including running tests, analyzing results, storing results, and creating graphs.
     """
+    data_file = open(f"{OUTPUT_DIR}/perf_results.txt", "w+")
+
     results = {
         "cache-references": {"means": [], "conf_inter": []},
         "cache-misses": {"means": [], "conf_inter": []},
@@ -79,7 +81,9 @@ def main() -> None:
     }
 
     # Run perf for all modes
-    for mode in MODES:
+    for i, mode in enumerate(MODES):
+        data_file.write(f"MODE: {mode}\n")
+
         print(f"Running perf measurements: {mode} mode")
         c_ref, c_mis, l1_mis = run_perf_stat(mode)
 
@@ -88,8 +92,22 @@ def main() -> None:
             [c_ref, c_mis, l1_mis],
         ):
             mean_val, conf_inter = analyze_execution_data(data)
-            results[metric]["means"].append(mean_val)
-            results[metric]["conf_inter"].append(conf_inter)
+            rounded_mean, rounded_error = int(mean_val), int(conf_inter)
+            results[metric]["means"].append(rounded_mean)
+            results[metric]["conf_inter"].append(rounded_error)
+
+        # Save perf results to a text file
+        data_file.write(
+            f"\tCache-references: {results["cache-references"]["means"][i]} ± {results["cache-references"]["conf_inter"][i]}\n"
+        )
+        data_file.write(
+            f"\tCache-misses: {results["cache-misses"]["means"][i]} ± {results["cache-misses"]["conf_inter"][i]}\n"
+        )
+        data_file.write(
+            f"\tL1-dcache-load_misses: {results["L1-dcache-load_misses"]["means"][i]} ± {results["L1-dcache-load_misses"]["conf_inter"][i]}\n\n"
+        )
+
+    data_file.close()
 
     for option in results:
         x_pos = np.arange(len(MODES))
@@ -111,7 +129,7 @@ def main() -> None:
         plt.savefig(chart_path)
         plt.clf()
 
-    print(f"Charts saved to '{OUTPUT_DIR}' directory.")
+    print(f"Measurements and charts saved to '{OUTPUT_DIR}' directory.")
 
 
 if __name__ == "__main__":
