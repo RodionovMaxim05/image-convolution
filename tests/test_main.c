@@ -19,6 +19,7 @@
  * and runs all test groups sequentially.
  */
 int main(void) {
+	// Initialize random number generator with current time
 	srand((unsigned int)time(NULL));
 
 	const struct CMUnitTest core_tests[] = {
@@ -28,10 +29,12 @@ int main(void) {
 	};
 
 	const struct CMUnitTest sequential_tests[] = {
-		cmocka_unit_test(test_filter_inverse_with_random_image),
+		cmocka_unit_test(test_filter_compose_with_default_image),
+		cmocka_unit_test(test_filter_compose_with_random_image),
 		cmocka_unit_test(test_filter_inverse_with_default_image),
-		cmocka_unit_test(test_filter_zero_padding_with_random_image),
+		cmocka_unit_test(test_filter_inverse_with_random_image),
 		cmocka_unit_test(test_filter_zero_padding_with_default_image),
+		cmocka_unit_test(test_filter_zero_padding_with_random_image),
 	};
 
 	const struct CMUnitTest parallel_tests[] = {
