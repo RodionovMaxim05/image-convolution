@@ -8,14 +8,17 @@
  * (parallel_function). It compares the results of the parallel implementation with
  * those of the sequential implementation to ensure correctness.
  *
+ * @param is_randomly_image Boolean variable required to indicate whether the image
+ * should be saved for debugging.
  * @param parallel_function A pointer to the parallel implementation being tested
-(e.g., `parallel_pixel`, `parallel_row`).
+ * (e.g., `parallel_pixel`, `parallel_row`).
  * @param channel_image Pointer to the input image's RGB channels.
  * @param width Width of the image.
  * @param height Height of the image.
  * @param num_threads Number of threads to use for parallel processing.
  */
 static void run_test_with_filter(
+	bool is_randomly_image,
 	int (*parallel_function)(struct image_rgb *, struct image_rgb *, int, int,
 							 struct filter, int), // a little bit fp 🫠
 	struct image_rgb *channel_image, int width, int height, int num_threads) {
@@ -31,9 +34,21 @@ static void run_test_with_filter(
 									   filter, num_threads),
 					 0);
 
-	assert_memory_equal(result_seq.red, result_par.red, width * height);
-	assert_memory_equal(result_seq.green, result_par.green, width * height);
-	assert_memory_equal(result_seq.blue, result_par.blue, width * height);
+	if (is_randomly_image) {
+		if (!compare_channels_with_epsilon(&result_seq, &result_par, width,
+										   height)) {
+			save_image(*channel_image, width, height,
+					   "test_filter_compose_with_random_image.bmp");
+			assert(false);
+		}
+	} else {
+		assert_memory_equal(result_seq.red, result_par.red,
+							(size_t)width * (size_t)height);
+		assert_memory_equal(result_seq.green, result_par.green,
+							(size_t)width * (size_t)height);
+		assert_memory_equal(result_seq.blue, result_par.blue,
+							(size_t)width * (size_t)height);
+	}
 
 	free_image_rgb(channel_image);
 	free_image_rgb(&result_seq);
@@ -56,7 +71,7 @@ static void test_parallel_pixel_with_default_image(void **state) {
 	struct image_rgb channel_image = initialize_and_check_image_rgb(width, height);
 	split_image_into_rgb_channels(image, channel_image, width, height);
 
-	run_test_with_filter(parallel_pixel, &channel_image, width, height, 3);
+	run_test_with_filter(false, parallel_pixel, &channel_image, width, height, 3);
 
 	stbi_image_free(image);
 }
@@ -72,7 +87,7 @@ static void test_parallel_pixel_with_random_image(void **state) {
 
 	struct image_rgb channel_image = create_test_image(width, height);
 
-	run_test_with_filter(parallel_pixel, &channel_image, width, height, 3);
+	run_test_with_filter(true, parallel_pixel, &channel_image, width, height, 3);
 }
 
 /**
@@ -90,7 +105,7 @@ static void test_parallel_row_with_default_image(void **state) {
 	struct image_rgb channel_image = initialize_and_check_image_rgb(width, height);
 	split_image_into_rgb_channels(image, channel_image, width, height);
 
-	run_test_with_filter(parallel_row, &channel_image, width, height, 3);
+	run_test_with_filter(false, parallel_row, &channel_image, width, height, 3);
 
 	stbi_image_free(image);
 }
@@ -106,7 +121,7 @@ static void test_parallel_row_with_random_image(void **state) {
 
 	struct image_rgb channel_image = create_test_image(width, height);
 
-	run_test_with_filter(parallel_row, &channel_image, width, height, 3);
+	run_test_with_filter(true, parallel_row, &channel_image, width, height, 3);
 }
 
 /**
@@ -124,7 +139,7 @@ static void test_parallel_column_with_default_image(void **state) {
 	struct image_rgb channel_image = initialize_and_check_image_rgb(width, height);
 	split_image_into_rgb_channels(image, channel_image, width, height);
 
-	run_test_with_filter(parallel_column, &channel_image, width, height, 3);
+	run_test_with_filter(false, parallel_column, &channel_image, width, height, 3);
 
 	stbi_image_free(image);
 }
@@ -140,7 +155,7 @@ static void test_parallel_column_with_random_image(void **state) {
 
 	struct image_rgb channel_image = create_test_image(width, height);
 
-	run_test_with_filter(parallel_column, &channel_image, width, height, 3);
+	run_test_with_filter(true, parallel_column, &channel_image, width, height, 3);
 }
 
 /**
@@ -158,7 +173,7 @@ static void test_parallel_block_with_default_image(void **state) {
 	struct image_rgb channel_image = initialize_and_check_image_rgb(width, height);
 	split_image_into_rgb_channels(image, channel_image, width, height);
 
-	run_test_with_filter(parallel_block, &channel_image, width, height, 3);
+	run_test_with_filter(false, parallel_block, &channel_image, width, height, 3);
 
 	stbi_image_free(image);
 }
@@ -174,5 +189,5 @@ static void test_parallel_block_with_random_image(void **state) {
 
 	struct image_rgb channel_image = create_test_image(width, height);
 
-	run_test_with_filter(parallel_block, &channel_image, width, height, 3);
+	run_test_with_filter(true, parallel_block, &channel_image, width, height, 3);
 }
