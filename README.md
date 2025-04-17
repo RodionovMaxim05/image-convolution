@@ -49,7 +49,7 @@ Basic Command:
 ## Build
 To build the project:
 ```bash
-./scripts/build.sh
+./scripts/build.sh --release
 ```
 
 ## Testing
@@ -66,7 +66,22 @@ The project includes three types of tests:
 ```bash
 ./scripts/perf.sh <image_name>
 ```
-*Note that image for (1) and (2) must be in the 'images' directory
+
+## Prerequisites for Benchmarks (`Performance benchmarks` and `Cache performance analysis`)
+Before running benchmarks, you need to set up a Python virtual environment and install dependencies:
+1. Create a Python virtual environment:
+```bash
+python3 -m venv .venv
+```
+2. Activate the virtual environment:
+```bash
+source .venv/bin/activate
+```
+3. Install required dependencies:
+```bash
+pip install -r requirements.txt
+```
+Note: The image for benchmarks must be in the 'images' directory
 
 ## License
 
