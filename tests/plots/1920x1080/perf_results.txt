@@ -1,0 +1,25 @@
+MODE: seq
+	Cache-references: 14239200 ± 1745098
+	Cache-misses: 1745802 ± 97893
+	L1-dcache-load_misses: 27242281 ± 18560
+
+MODE: pixel
+	Cache-references: 20692986 ± 105483
+	Cache-misses: 821119 ± 2253
+	L1-dcache-load_misses: 12691073 ± 56589
+
+MODE: row
+	Cache-references: 1842353 ± 3302
+	Cache-misses: 818120 ± 2694
+	L1-dcache-load_misses: 1793849 ± 3348
+
+MODE: column
+	Cache-references: 18701393 ± 135199
+	Cache-misses: 996549 ± 3319
+	L1-dcache-load_misses: 27258502 ± 3916
+
+MODE: block
+	Cache-references: 1985792 ± 6044
+	Cache-misses: 821769 ± 2386
+	L1-dcache-load_misses: 1666778 ± 3670
+
