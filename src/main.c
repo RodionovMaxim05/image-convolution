@@ -17,7 +17,7 @@
  * A structure to store the parsed command-line arguments.
  *
  * @param image_path Path to the input image file or "images/cat.bmp" if
---default-image is specified.
+ * --default-image is specified.
  * @param filter_name Name of the filter to apply.
  * @param mode Execution mode ("seq", "row", "column", "block", or "pixel").
  * @param threads_num Number of threads to use in parallel modes (ignored for "seq").
@@ -30,8 +30,8 @@ typedef struct {
 } ProgramArgs;
 
 /**
- * Handles runtime errors by printing an error message (using error) if the specified
- * condition is true.
+ * Handles runtime errors by printing an error message if the specified condition is
+ * true.
  *
  * @param condition A boolean value indicating whether an error has occurred.
  * @param message String describing the error.
@@ -53,7 +53,7 @@ static inline bool handle_error(bool condition, const char *message, ...) {
 
 /**
  * Parses the command-line arguments provided to the program. It validates the input
- * and populates the ProgramArgs structure with the parsed values.
+ * and populates the `ProgramArgs` structure with the parsed values.
  *
  * @param argc The number of command-line arguments.
  * @param argv An array of strings containing the command-line arguments.
