@@ -1,108 +1,108 @@
 FILTER: Identity Filter (3x3 kernel)
 
 	Mode: seq
-		Result: 0.2244 ± 0.0009 s
+		Result: 0.225 ± 0.001 s
 	Mode: pixel
-		Result: 0.138 ± 0.001 s
+		Result: 0.1381 ± 0.0008 s
 		The image is identical to the sequential output
 	Mode: row
-		Result: 0.0642 ± 0.0001 s
+		Result: 0.0643 ± 0.0002 s
 		The image is identical to the sequential output
 	Mode: column
-		Result: 0.07011 ± 7e-05 s
+		Result: 0.07 ± 6e-05 s
 		The image is identical to the sequential output
 	Mode: block
-		Result: 0.0651 ± 0.0007 s
+		Result: 0.065 ± 0.0006 s
 		The image is identical to the sequential output
 
 
 FILTER: Standard Blur Filter (5x5 kernel)
 
 	Mode: seq
-		Result: 0.5628 ± 0.0005 s
+		Result: 0.5624 ± 0.0006 s
 	Mode: pixel
-		Result: 0.229 ± 0.001 s
+		Result: 0.2294 ± 0.0008 s
 		The image is identical to the sequential output
 	Mode: row
-		Result: 0.1646 ± 0.0003 s
+		Result: 0.1645 ± 0.0002 s
 		The image is identical to the sequential output
 	Mode: column
-		Result: 0.1728 ± 0.0004 s
+		Result: 0.1725 ± 0.0003 s
 		The image is identical to the sequential output
 	Mode: block
-		Result: 0.1653 ± 0.0009 s
+		Result: 0.166 ± 0.002 s
 		The image is identical to the sequential output
 
 
 FILTER: Gaussian Blur Filter (5x5 kernel)
 
 	Mode: seq
-		Result: 0.5629 ± 0.0004 s
+		Result: 0.5618 ± 0.0007 s
 	Mode: pixel
-		Result: 0.229 ± 0.0009 s
+		Result: 0.2286 ± 0.0007 s
 		The image is identical to the sequential output
 	Mode: row
-		Result: 0.1648 ± 0.0003 s
+		Result: 0.16429 ± 4e-05 s
 		The image is identical to the sequential output
 	Mode: column
-		Result: 0.1733 ± 0.0006 s
+		Result: 0.1725 ± 0.0003 s
 		The image is identical to the sequential output
 	Mode: block
-		Result: 0.1649 ± 0.0008 s
+		Result: 0.165 ± 0.001 s
 		The image is identical to the sequential output
 
 
 FILTER: Motion Blur Filter (9x9 kernel)
 
 	Mode: seq
-		Result: 1.6911 ± 0.0008 s
+		Result: 1.69 ± 0.001 s
 	Mode: pixel
 		Result: 0.571 ± 0.002 s
 		The image is identical to the sequential output
 	Mode: row
-		Result: 0.5136 ± 0.0006 s
+		Result: 0.516 ± 0.002 s
 		The image is identical to the sequential output
 	Mode: column
-		Result: 0.529 ± 0.002 s
+		Result: 0.5268 ± 0.0005 s
 		The image is identical to the sequential output
 	Mode: block
-		Result: 0.515 ± 0.002 s
+		Result: 0.516 ± 0.003 s
 		The image is identical to the sequential output
 
 
 FILTER: Edge Detection Filter (3x3 kernel)
 
 	Mode: seq
-		Result: 0.2302 ± 0.0005 s
+		Result: 0.2311 ± 0.0009 s
 	Mode: pixel
-		Result: 0.137 ± 0.001 s
+		Result: 0.1379 ± 0.0009 s
 		The image is identical to the sequential output
 	Mode: row
-		Result: 0.0642 ± 0.0001 s
+		Result: 0.0644 ± 0.0003 s
 		The image is identical to the sequential output
 	Mode: column
-		Result: 0.07009 ± 9e-05 s
+		Result: 0.0704 ± 0.0003 s
 		The image is identical to the sequential output
 	Mode: block
-		Result: 0.0649 ± 0.0005 s
+		Result: 0.0643 ± 2e-05 s
 		The image is identical to the sequential output
 
 
 FILTER: Emboss Filter (5x5 kernel)
 
 	Mode: seq
-		Result: 0.5632 ± 0.0003 s
+		Result: 0.567 ± 0.002 s
 	Mode: pixel
-		Result: 0.229 ± 0.001 s
+		Result: 0.2282 ± 0.0004 s
 		The image is identical to the sequential output
 	Mode: row
 		Result: 0.165 ± 0.0004 s
 		The image is identical to the sequential output
 	Mode: column
-		Result: 0.1726 ± 0.0002 s
+		Result: 0.1736 ± 0.0006 s
 		The image is identical to the sequential output
 	Mode: block
-		Result: 0.166 ± 0.001 s
+		Result: 0.1648 ± 0.0007 s
 		The image is identical to the sequential output
 
 
