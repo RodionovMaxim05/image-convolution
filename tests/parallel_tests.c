@@ -60,7 +60,7 @@ static void run_test_with_filter(
  * Tests the `parallel_pixel()` implementation using a predefined default image
  * (cat.bmp).
  */
-static void test_parallel_pixel_with_default_image(void **state) {
+void test_parallel_pixel_with_default_image(void **state) {
 	(void)state;
 
 	int width, height, channels;
@@ -79,7 +79,7 @@ static void test_parallel_pixel_with_default_image(void **state) {
 /**
  * Tests the `parallel_pixel()` implementation using a randomly generated image.
  */
-static void test_parallel_pixel_with_random_image(void **state) {
+void test_parallel_pixel_with_random_image(void **state) {
 	(void)state;
 
 	int width = (rand() % UPPER_SIZE_LIMIT), height = (rand() % UPPER_SIZE_LIMIT);
@@ -94,7 +94,7 @@ static void test_parallel_pixel_with_random_image(void **state) {
  * Tests the `parallel_row()` implementation using a predefined default image
  * (cat.bmp).
  */
-static void test_parallel_row_with_default_image(void **state) {
+void test_parallel_row_with_default_image(void **state) {
 	(void)state;
 
 	int width, height, channels;
@@ -113,7 +113,7 @@ static void test_parallel_row_with_default_image(void **state) {
 /**
  * Tests the `parallel_row()` implementation using a randomly generated image
  */
-static void test_parallel_row_with_random_image(void **state) {
+void test_parallel_row_with_random_image(void **state) {
 	(void)state;
 
 	int width = (rand() % UPPER_SIZE_LIMIT), height = (rand() % UPPER_SIZE_LIMIT);
@@ -128,7 +128,7 @@ static void test_parallel_row_with_random_image(void **state) {
  * Tests the `parallel_column()` implementation using a predefined default image
  * (cat.bmp).
  */
-static void test_parallel_column_with_default_image(void **state) {
+void test_parallel_column_with_default_image(void **state) {
 	(void)state;
 
 	int width, height, channels;
@@ -147,7 +147,7 @@ static void test_parallel_column_with_default_image(void **state) {
 /**
  * Tests the `parallel_column()` implementation using a randomly generated image.
  */
-static void test_parallel_column_with_random_image(void **state) {
+void test_parallel_column_with_random_image(void **state) {
 	(void)state;
 
 	int width = (rand() % UPPER_SIZE_LIMIT), height = (rand() % UPPER_SIZE_LIMIT);
@@ -162,7 +162,7 @@ static void test_parallel_column_with_random_image(void **state) {
  * Tests the `parallel_block()` implementation using a predefined default image
  * (cat.bmp).
  */
-static void test_parallel_block_with_default_image(void **state) {
+void test_parallel_block_with_default_image(void **state) {
 	(void)state;
 
 	int width, height, channels;
@@ -181,7 +181,7 @@ static void test_parallel_block_with_default_image(void **state) {
 /**
  * Tests the `parallel_block()` implementation using a randomly generated image.
  */
-static void test_parallel_block_with_random_image(void **state) {
+void test_parallel_block_with_random_image(void **state) {
 	(void)state;
 
 	int width = (rand() % UPPER_SIZE_LIMIT), height = (rand() % UPPER_SIZE_LIMIT);

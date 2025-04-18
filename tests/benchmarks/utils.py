@@ -68,3 +68,24 @@ def analyze_execution_data(data):
     )
 
     return mean_time, confidence_interval
+
+
+def round_results(mean_time, confidence_interval):
+    """
+    Rounds the mean execution time and confidence interval to a consistent number of significant figures.
+
+    Args:
+        mean_time (float): Mean execution time.
+        confidence_interval (float): Confidence interval for the mean.
+
+    Returns:
+        A tuple (rounded_mean, rounded_conf_inter) with appropriately rounded values.
+    """
+    rounded_conf_inter = round(
+        confidence_interval, -int(np.floor(np.log10(abs(confidence_interval))))
+    )
+    rounded_mean = round(
+        mean_time, -int(np.floor(np.log10(abs(rounded_conf_inter))))
+    )
+
+    return rounded_mean, rounded_conf_inter
