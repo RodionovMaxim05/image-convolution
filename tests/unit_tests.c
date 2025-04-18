@@ -56,6 +56,7 @@ void test_split_assemble_channels(void **state) {
 						IMAGE_WIDTH * IMAGE_HEIGHT);
 
 	unsigned char *assembled_image = malloc(IMAGE_WIDTH * IMAGE_HEIGHT * 3);
+	assert_non_null(assembled_image);
 	assemble_image_from_rgb_channels(assembled_image, channel_image, IMAGE_WIDTH,
 									 IMAGE_HEIGHT);
 
