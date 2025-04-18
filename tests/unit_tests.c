@@ -13,7 +13,7 @@ unsigned char test_image[] = {
 /**
  * Tests the creation of a convolution filter using the `create_filter()` function.
  */
-static void test_create_filter(void **state) {
+void test_create_filter(void **state) {
 	(void)state;
 
 	struct filter filter = create_filter(3, 1.0, 0.0, id);
@@ -37,7 +37,7 @@ static void test_create_filter(void **state) {
  * (`split_image_into_rgb_channels()`) and reassembling it back into a single image
  * (`assemble_image_from_rgb_channels()`).
  */
-static void test_split_assemble_channels(void **state) {
+void test_split_assemble_channels(void **state) {
 	(void)state;
 
 	struct image_rgb channel_image =
@@ -68,7 +68,7 @@ static void test_split_assemble_channels(void **state) {
 /**
  * Tests the application of an identity filter to an image.
  */
-static void test_identity_filter(void **state) {
+void test_identity_filter(void **state) {
 	(void)state;
 
 	struct image_rgb channel_image =

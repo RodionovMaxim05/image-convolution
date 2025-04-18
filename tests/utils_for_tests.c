@@ -4,7 +4,6 @@
 #include "../src/utils/utils.h"
 
 #define UPPER_SIZE_LIMIT 2500 // To ensure that the filter is not used for too long.
-#define MAX_RANDOM_FILTER_SIZE 9
 #define MIN_FACTOR 0.0005
 #define MAX_FACTOR 1.0
 
@@ -17,7 +16,7 @@
  *
  * @return An initialized `structure image_rgb`.
  */
-static struct image_rgb initialize_and_check_image_rgb(int width, int height) {
+struct image_rgb initialize_and_check_image_rgb(int width, int height) {
 	struct image_rgb image = initialize_image_rgb(width, height);
 	assert_non_null(image.red);
 	assert_non_null(image.green);
@@ -34,7 +33,7 @@ static struct image_rgb initialize_and_check_image_rgb(int width, int height) {
  *
  * @return A `structure image_rgb` representing a randomly generated test image.
  */
-static struct image_rgb create_test_image(int width, int height) {
+struct image_rgb create_test_image(int width, int height) {
 	struct image_rgb image = initialize_and_check_image_rgb(width, height);
 	for (size_t i = 0; i < (size_t)width * (size_t)height; i++) {
 		image.red[i] = rand() % 256;
@@ -45,27 +44,30 @@ static struct image_rgb create_test_image(int width, int height) {
 }
 
 /**
- * Create a random filter with odd size between 3 and MAX_RANDOM_FILTER_SIZE.
- * Core elements >= 0 and bias = 0 to avoid truncating values ​​less than zero
- * and greater than 255.
+ * Create a random filter.
+ * Core elements >= 0 and bias = 0 to avoid truncating values less than zero and
+ * greater than 255.
+ *
+ * @param size The size of the filter kernel.
+ * @param kernel A 2D array representing the kernel matrix. The function populates
+ * this array with random values.
  *
  * @return A `struct filter` randomly generated filter.
  */
-struct filter create_random_filter() {
+struct filter generate_random_filter(int size, double kernel[size][size]) {
 	struct filter random_filter;
-
-	int random_index = rand() % ((MAX_RANDOM_FILTER_SIZE - 1) / 2);
-	int size = 2 * random_index + 3;
 	random_filter.size = size;
 
 	random_filter.kernel = (double **)malloc(size * sizeof(double *));
-	for (int i = 0; i < size; i++) {
-		random_filter.kernel[i] = (double *)malloc(size * sizeof(double));
-	}
+	assert_non_null(random_filter.kernel);
 
 	for (int i = 0; i < size; i++) {
+		random_filter.kernel[i] = (double *)malloc(size * sizeof(double));
+		assert_non_null(random_filter.kernel[i]);
+
 		for (int j = 0; j < size; j++) {
-			random_filter.kernel[i][j] = (double)rand();
+			kernel[i][j] = (double)rand();
+			random_filter.kernel[i][j] = kernel[i][j];
 		}
 	}
 
@@ -121,49 +123,6 @@ bool compare_channels_with_epsilon(struct image_rgb *expected,
 }
 
 /**
- * Composes two filters into a single filter.
- *
- * @param filter1 First filter.
- * @param filter2 Second filter.
- *
- * @return A `struct filter` Composed filter
- */
-struct filter compose_filters(struct filter filter1, struct filter filter2) {
-	int new_size = filter1.size + filter2.size - 1;
-
-	double **kernel = (double **)malloc(new_size * sizeof(double *));
-	for (int i = 0; i < new_size; i++) {
-		kernel[i] = (double *)calloc(new_size, sizeof(double));
-	}
-
-	for (int i = 0; i < new_size; i++) {
-		for (int j = 0; j < new_size; j++) {
-
-			for (int fi = 0; fi < filter1.size; fi++) {
-				for (int fj = 0; fj < filter1.size; fj++) {
-					int i2 = i - fi;
-					int j2 = j - fj;
-
-					if (i2 >= 0 && i2 < filter2.size && j2 >= 0 &&
-						j2 < filter2.size) {
-						kernel[i][j] +=
-							filter1.kernel[fi][fj] * filter2.kernel[i2][j2];
-					}
-				}
-			}
-		}
-	}
-
-	double new_factor = filter1.factor * filter2.factor;
-	double new_bias = filter1.bias * filter2.factor + filter2.bias;
-
-	struct filter composed = {
-		.size = new_size, .kernel = kernel, .factor = new_factor, .bias = new_bias};
-
-	return composed;
-}
-
-/**
  * Print filter details for debugging.
  *
  * @param filter Pointer to the filter.
@@ -187,22 +146,22 @@ void print_filter(const struct filter *filter, const char *name) {
 		printf("\n");
 	}
 	printf("}\n");
-	printf("factor: %.4f\n", filter->factor);
+	printf("factor: %f\n", filter->factor);
 	printf("bias: %.1f\n", filter->bias);
 	printf("\n");
 }
 
 /**
- * Applies zero padding to a convolution filter by embedding the original filter's
- * kernel into the center of a larger kernel filled with zeros.
+ * Applies zero padding to a convolution filter by embedding the original
+ * filter's kernel into the center of a larger kernel filled with zeros.
  *
  * @param padded_filter Pointer to the filter that will receive the zero-padded
  * kernel.
  * @param original_filter Pointer to the original filter whose kernel will be
  * embedded.
  */
-static void apply_zero_padding(struct filter *padded_filter,
-							   struct filter *original_filter) {
+void apply_zero_padding(struct filter *padded_filter,
+						struct filter *original_filter) {
 	// Filling the extended filter kernel with zeros
 	for (int i = 0; i < padded_filter->size; i++) {
 		for (int j = 0; j < padded_filter->size; j++) {

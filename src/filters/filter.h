@@ -30,7 +30,7 @@
 #define EMBOSS_FACTOR 1.0
 #define EMBOSS_BIAS 128.0
 
-#define NUM_OF_FILTERS 7
+#define NUM_OF_FILTERS 9
 
 /**
  * Represents metadata about a filter, including its name and description.
@@ -90,3 +90,24 @@ struct filter create_filter(int size, double factor, double bias,
  * @param filter Pointer to the `struct filter` whose memory needs to be freed.
  */
 void free_filter(struct filter *f);
+
+/**
+ * Composes two convolution filters into a single filter by combining their kernels,
+ * scaling factors, and biases.
+ *
+ * @param size1 Size of the first filter's kernel.
+ * @param factor1 Scaling factor of the first filter.
+ * @param bias1 Bias value of the first filter.
+ * @param kernel1 Kernel matrix of the first filter.
+ * @param size2 Size of the second filter's kernel.
+ * @param factor2 Scaling factor of the second filter.
+ * @param bias2 Bias value of the second filter.
+ * @param kernel2 Kernel matrix of the second filter.
+ *
+ * @return A `struct filter` with the composed properties. If memory allocation
+ * fails, returns an empty filter `{0, 0.0, 0.0, NULL}`.
+ */
+struct filter compose_filters_from_params(int size1, double factor1, double bias1,
+										  const double kernel1[size1][size1],
+										  int size2, double factor2, double bias2,
+										  const double kernel2[size2][size2]);

@@ -3,13 +3,15 @@
 
 #include "utils_for_tests.c"
 
+#define MAX_RANDOM_FILTER_SIZE 9
+
 // Filter composition tests
 
 /**
  * Tests the composition of two random filters applied sequentially
  * versus their composed version on a predefined default image (cat.bmp).
  */
-static void test_filter_compose_with_default_image(void **state) {
+void test_filter_compose_with_default_image(void **state) {
 	(void)state;
 
 	int width, height, channels;
@@ -20,30 +22,38 @@ static void test_filter_compose_with_default_image(void **state) {
 	struct image_rgb channel_image = initialize_and_check_image_rgb(width, height);
 	split_image_into_rgb_channels(image, channel_image, width, height);
 
-	struct filter filter_1 = create_random_filter();
-	struct filter filter_2 = create_random_filter();
-	assert_non_null(filter_1.kernel);
-	assert_non_null(filter_2.kernel);
-	printf("Testing with random filters size: %d and %d\n", filter_1.size,
-		   filter_2.size);
+	// Generate random filter sizes: odd size between 3 and MAX_RANDOM_FILTER_SIZE
+	int size1 = 2 * (rand() % ((MAX_RANDOM_FILTER_SIZE - 1) / 2)) + 3;
+	int size2 = 2 * (rand() % ((MAX_RANDOM_FILTER_SIZE - 1) / 2)) + 3;
 
-	struct filter composed_filter = compose_filters(filter_2, filter_1);
+	double random_kernel1[size1][size1];
+	double random_kernel2[size2][size2];
+
+	struct filter filter1 = generate_random_filter(size1, random_kernel1);
+	struct filter filter2 = generate_random_filter(size2, random_kernel2);
+	printf("Testing with random filters size: %d and %d\n", size1, size2);
+
+	struct filter composed_filter = compose_filters_from_params(
+		filter1.size, filter1.factor, filter1.bias, random_kernel1, filter2.size,
+		filter2.factor, filter2.bias, random_kernel2);
 
 	struct image_rgb result1 = initialize_and_check_image_rgb(width, height);
 	struct image_rgb result2 = initialize_and_check_image_rgb(width, height);
 	struct image_rgb result_composed = initialize_and_check_image_rgb(width, height);
 
-	sequential_application(&channel_image, &result1, width, height, filter_1);
-	sequential_application(&result1, &result2, width, height, filter_2);
+	// Apply filters sequentially
+	sequential_application(&channel_image, &result1, width, height, filter1);
+	sequential_application(&result1, &result2, width, height, filter2);
 
+	// Apply the composed filter
 	sequential_application(&channel_image, &result_composed, width, height,
 						   composed_filter);
 
 	if (!compare_channels_with_epsilon(&result_composed, &result2, width, height)) {
 		printf("The images are not similar!\n");
 
-		print_filter(&filter_1, "FILTER 1");
-		print_filter(&filter_2, "FILTER 2");
+		print_filter(&filter1, "FILTER 1");
+		print_filter(&filter2, "FILTER 2");
 		fflush(stdout);
 
 		assert(false);
@@ -54,8 +64,8 @@ static void test_filter_compose_with_default_image(void **state) {
 	free_image_rgb(&result1);
 	free_image_rgb(&result2);
 	free_image_rgb(&result_composed);
-	free_filter(&filter_1);
-	free_filter(&filter_2);
+	free_filter(&filter1);
+	free_filter(&filter2);
 	free_filter(&composed_filter);
 }
 
@@ -63,7 +73,7 @@ static void test_filter_compose_with_default_image(void **state) {
  * Tests the composition of two random filters applied sequentially
  * versus their composed version on a randomly generated image.
  */
-static void test_filter_compose_with_random_image(void **state) {
+void test_filter_compose_with_random_image(void **state) {
 	(void)state;
 
 	int width = (rand() % UPPER_SIZE_LIMIT), height = (rand() % UPPER_SIZE_LIMIT);
@@ -71,21 +81,29 @@ static void test_filter_compose_with_random_image(void **state) {
 
 	struct image_rgb channel_image = create_test_image(width, height);
 
-	struct filter filter_1 = create_random_filter();
-	struct filter filter_2 = create_random_filter();
-	assert_non_null(filter_1.kernel);
-	assert_non_null(filter_2.kernel);
-	printf("Testing with random filters size: %d and %d\n", filter_1.size,
-		   filter_2.size);
+	int random_index1 = rand() % ((MAX_RANDOM_FILTER_SIZE - 1) / 2);
+	int size1 = 2 * random_index1 + 3;
+	int random_index2 = rand() % ((MAX_RANDOM_FILTER_SIZE - 1) / 2);
+	int size2 = 2 * random_index2 + 3;
 
-	struct filter composed_filter = compose_filters(filter_2, filter_1);
+	double random_kernel1[size1][size1];
+	double random_kernel2[size2][size2];
+
+	struct filter filter1 = generate_random_filter(size1, random_kernel1);
+	struct filter filter2 = generate_random_filter(size2, random_kernel2);
+	printf("Testing with random filters size: %d and %d\n", filter1.size,
+		   filter2.size);
+
+	struct filter composed_filter = compose_filters_from_params(
+		filter1.size, filter1.factor, filter1.bias, random_kernel1, filter2.size,
+		filter2.factor, filter2.bias, random_kernel2);
 
 	struct image_rgb result1 = initialize_and_check_image_rgb(width, height);
 	struct image_rgb result2 = initialize_and_check_image_rgb(width, height);
 	struct image_rgb result_composed = initialize_and_check_image_rgb(width, height);
 
-	sequential_application(&channel_image, &result1, width, height, filter_1);
-	sequential_application(&result1, &result2, width, height, filter_2);
+	sequential_application(&channel_image, &result1, width, height, filter1);
+	sequential_application(&result1, &result2, width, height, filter2);
 	sequential_application(&channel_image, &result_composed, width, height,
 						   composed_filter);
 
@@ -94,8 +112,8 @@ static void test_filter_compose_with_random_image(void **state) {
 		save_image(channel_image, width, height,
 				   "test_filter_compose_with_random_image.bmp");
 
-		print_filter(&filter_1, "FILTER 1");
-		print_filter(&filter_2, "FILTER 2");
+		print_filter(&filter1, "FILTER 1");
+		print_filter(&filter2, "FILTER 2");
 		fflush(stdout);
 
 		assert(false);
@@ -105,8 +123,8 @@ static void test_filter_compose_with_random_image(void **state) {
 	free_image_rgb(&result1);
 	free_image_rgb(&result2);
 	free_image_rgb(&result_composed);
-	free_filter(&filter_1);
-	free_filter(&filter_2);
+	free_filter(&filter1);
+	free_filter(&filter2);
 	free_filter(&composed_filter);
 }
 
@@ -116,7 +134,7 @@ static void test_filter_compose_with_random_image(void **state) {
  * Tests the inversion property of filters using a predefined
  * default image (cat.bmp).
  */
-static void test_filter_inverse_with_default_image(void **state) {
+void test_filter_inverse_with_default_image(void **state) {
 	(void)state;
 
 	int width, height, channels;
@@ -161,7 +179,7 @@ static void test_filter_inverse_with_default_image(void **state) {
  * sequential filters (shift_right and shift_left) to a randomly
  * generated image.
  */
-static void test_filter_inverse_with_random_image(void **state) {
+void test_filter_inverse_with_random_image(void **state) {
 	(void)state;
 
 	int width = (rand() % UPPER_SIZE_LIMIT), height = (rand() % UPPER_SIZE_LIMIT);
@@ -205,7 +223,7 @@ static void test_filter_inverse_with_random_image(void **state) {
  * Tests the zero-padding functionality using a predefined
  * default image (cat.bmp).
  */
-static void test_filter_zero_padding_with_default_image(void **state) {
+void test_filter_zero_padding_with_default_image(void **state) {
 	(void)state;
 
 	int width, height, channels;
@@ -247,7 +265,7 @@ static void test_filter_zero_padding_with_default_image(void **state) {
  * of applying a small filter (fast_blur) and its zero-padded
  * version to a randomly generated image.
  */
-static void test_filter_zero_padding_with_random_image(void **state) {
+void test_filter_zero_padding_with_random_image(void **state) {
 	(void)state;
 
 	int width = (rand() % UPPER_SIZE_LIMIT), height = (rand() % UPPER_SIZE_LIMIT);

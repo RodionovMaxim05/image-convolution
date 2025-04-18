@@ -159,6 +159,14 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(args.filter_name, "em") == 0) {
 		image_filter =
 			create_filter(EMBOSS_SIZE, EMBOSS_FACTOR, EMBOSS_BIAS, emboss);
+	} else if (strcmp(args.filter_name, "bl+gbl") == 0) {
+		image_filter = compose_filters_from_params(
+			BLUR_SIZE, BLUR_FACTOR, BLUR_BIAS, blur, GAUS_BLUR_SIZE,
+			GAUS_BLUR_FACTOR, GAUS_BLUR_BIAS, gaus_blur);
+	} else if (strcmp(args.filter_name, "fbl+mbl") == 0) {
+		image_filter = compose_filters_from_params(
+			FAST_BLUR_SIZE, FAST_BLUR_FACTOR, FAST_BLUR_BIAS, fast_blur,
+			MOTION_BLUR_SIZE, MOTION_BLUR_FACTOR, MOTION_BLUR_BIAS, motion_blur);
 	} else {
 		if (handle_error(1, "Unknown filter name: %s\n", args.filter_name)) {
 			goto cleanup_and_err;
@@ -258,7 +266,9 @@ cleanup_and_err:
 	}
 	free_image_rgb(&channel_image);
 	free_image_rgb(&result_channel_image);
-	free_filter(&image_filter);
+	if (image_filter.kernel != NULL) {
+		free_filter(&image_filter);
+	}
 	free(result_image);
 	free(output_file_path);
 

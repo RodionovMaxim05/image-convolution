@@ -26,15 +26,17 @@ Basic Command:
 *Required for all modes except seq
 
 ### Available Filters
-| Name | Description                 | Kernel Size |
-|------|-----------------------------|-------------|
-| `id` | Identity filter (no effect) | 3x3         |
-| `fbl`| Fast blur filter            | 3x3         |
-| `bl` | Standard blur filter        | 5x5         |
-| `gbl`| Gaussian blur filter        | 5x5         |
-| `mbl`| Motion blur filter          | 9x9         |
-| `ed` | Edge detection filter       | 3x3         |
-| `em` | Emboss filter               | 5x5         |
+| Name      | Description                                            | Kernel Size |
+|-----------|--------------------------------------------------------|-------------|
+| `id`      | Identity filter (no effect)                            | 3x3         |
+| `fbl`     | Fast blur filter                                       | 3x3         |
+| `bl`      | Standard blur filter                                   | 5x5         |
+| `gbl`     | Gaussian blur filter                                   | 5x5         |
+| `mbl`     | Motion blur filter                                     | 9x9         |
+| `ed`      | Edge detection filter                                  | 3x3         |
+| `em`      | Emboss filter                                          | 5x5         |
+| `bl+gbl`  | Composition of Standard blur and Gaussian blur filters | 9x9         |
+| `fbl+mbl` | Composition of Fast blur and Motion blur filters       | 11x11       |
 
 ### Examples
 1) Sequential processing:
