@@ -1,0 +1,6 @@
+Result for bl + gbl
+	Sequential: 2.112 ± 0.002 s
+	Composed: 3.137 ± 0.003 s
+Result for fbl + mbl
+	Sequential: 3.583 ± 0.003 s
+	Composed: 4.619 ± 0.004 s
