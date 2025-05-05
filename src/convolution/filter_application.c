@@ -44,25 +44,25 @@ void *process_dynamic(void *arg) {
 			break;
 		}
 
-		int block_x = block_index % data->num_cols;
-		int block_y = block_index / data->num_cols;
+		size_t block_x = block_index % data->num_cols;
+		size_t block_y = block_index / data->num_cols;
 
-		int start_x = block_x * data->block_width;
-		int start_y = block_y * data->block_height;
+		size_t start_x = block_x * data->block_width;
+		size_t start_y = block_y * data->block_height;
 
-		int end_x = min(start_x + data->block_width, data->width);
-		int end_y = min(start_y + data->block_height, data->height);
+		size_t end_x = min(start_x + data->block_width, (size_t)data->width);
+		size_t end_y = min(start_y + data->block_height, (size_t)data->height);
 
-		for (int y = start_y; y < end_y; y++) {
-			for (int x = start_x; x < end_x; x++) {
+		for (size_t y = start_y; y < end_y; y++) {
+			for (size_t x = start_x; x < end_x; x++) {
 				double red = 0.0, green = 0.0, blue = 0.0;
 
 				for (int filterY = 0; filterY < data->filter.size; filterY++) {
 					for (int filterX = 0; filterX < data->filter.size; filterX++) {
-						int imageX =
+						size_t imageX =
 							(x - data->filter.size / 2 + filterX + data->width) %
 							data->width;
-						int imageY =
+						size_t imageY =
 							(y - data->filter.size / 2 + filterY + data->height) %
 							data->height;
 

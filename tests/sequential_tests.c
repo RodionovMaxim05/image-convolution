@@ -1,7 +1,7 @@
 #include "../src/convolution/filter_application.h"
 #include "../src/convolution/parallel_dispatch.h"
 
-#include "utils_for_tests.c"
+#include "utils_for_tests.h"
 
 #define MAX_RANDOM_FILTER_SIZE 9
 
@@ -303,4 +303,21 @@ void test_filter_zero_padding_with_random_image(void **state) {
 	free_image_rgb(&result2);
 	free_filter(&filter);
 	free_filter(&padded_filter);
+}
+
+int main(void) {
+	// Initialize random number generator with current time
+	srand((unsigned int)time(NULL));
+
+	const struct CMUnitTest sequential_tests[] = {
+		cmocka_unit_test(test_filter_compose_with_default_image),
+		cmocka_unit_test(test_filter_compose_with_random_image),
+		cmocka_unit_test(test_filter_inverse_with_default_image),
+		cmocka_unit_test(test_filter_inverse_with_random_image),
+		cmocka_unit_test(test_filter_zero_padding_with_default_image),
+		cmocka_unit_test(test_filter_zero_padding_with_random_image),
+	};
+
+	return cmocka_run_group_tests_name("Sequential Application Tests",
+									   sequential_tests, NULL, NULL);
 }
