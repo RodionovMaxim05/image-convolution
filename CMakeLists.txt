@@ -13,6 +13,6 @@ add_subdirectory(src)
 
 find_package(CMocka CONFIG)
 if (CMocka_FOUND)
-    add_subdirectory(tests)
     enable_testing()
+    add_subdirectory(tests)
 endif(CMocka_FOUND)
