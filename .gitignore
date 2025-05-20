@@ -58,3 +58,4 @@ build
 pics/
 *_cat.bmp
 *_monkey.bmp
+output_queue_mode/

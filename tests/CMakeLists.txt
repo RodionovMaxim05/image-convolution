@@ -1,5 +1,10 @@
 file(GLOB_RECURSE SRC_SOURCES ${CMAKE_SOURCE_DIR}/src/*.c)
-list(REMOVE_ITEM SRC_SOURCES ${CMAKE_SOURCE_DIR}/src/main.c)
+list(REMOVE_ITEM SRC_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/main.c
+    ${CMAKE_SOURCE_DIR}/src/queue_mode/queue.c
+    ${CMAKE_SOURCE_DIR}/src/queue_mode/threads.c
+    ${CMAKE_SOURCE_DIR}/src/queue_mode/queue_dispatch.c
+)
 
 add_executable(unit_tests unit_tests.c utils_for_tests.c ${SRC_SOURCES})
 add_executable(sequential_tests sequential_tests.c utils_for_tests.c ${SRC_SOURCES})

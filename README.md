@@ -16,14 +16,21 @@ Basic Command:
 ./build/src/image-convolution <image_path> <filter_name> --mode=<mode> [--thread=<num>]
 ```
 ### Options
-| Parameter          | Description                                                         | Required |
-|--------------------|---------------------------------------------------------------------|----------|
-| `<image_path>`     | Path to input image or `--default-image` (predefined default image) | Yes      |
-| `<filter_name>`    | Filter to apply (see [Available Filters](#available-filters))       | Yes      |
-| `--mode=<mode>`    | Execution mode: `seq`, `pixel`, `row`, `column`, `block`            | Yes      |
-| `--thread=<num>`   | Number of threads (for parallel modes)                              | No*      |
+| Parameter          | Description                                                                 |
+|--------------------|-----------------------------------------------------------------------------|
+| `<image_path>`     | Path to input image or `--default-image` (predefined default image)         |
+| `<filter_name>`    | Filter to apply (see [Available Filters](#available-filters))               |
+| `--mode=<mode>`    | Execution mode: `seq`, `pixel`, `row`, `column`, `block` or `queue`         |
+| `--thread=<num>`   | Number of threads to use for parallel convolution (ignored if `--mode=seq`) |
 
-*Required for all modes except seq
+#### Queue options
+| Parameter          | Description                                                         |
+|--------------------|---------------------------------------------------------------------|
+| `--num=<images>`   | Number of images to process                                         |
+| `--readers=<num>`  | Number of reader threads                                            |
+| `--workers=<num>`  | Number of worker threads                                            |
+| `--writers=<num>`  | Number of writer threads                                            |
+| `--mem_lim=<MiB>`  | Memory limit for queues in MiB (e.g., 10)        |                  |
 
 ### Available Filters
 | Name      | Description                                            | Kernel Size |
@@ -46,6 +53,10 @@ Basic Command:
 2) Parallel processing (4 threads):
 ```bash
 ./build/src/image-convolution images/cat.bmp gbl --mode=block --thread=4
+```
+3) Queue-Based pipeline processing:
+```bash
+./build/src/image-convolution images mbl --mode=queue --thread=2 --num=25 --readers=2 --workers=3 --writers=2 --mem_lim=15
 ```
 
 ## Build
