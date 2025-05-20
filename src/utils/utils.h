@@ -70,6 +70,6 @@ void assemble_image_from_rgb_channels(unsigned char *image,
 /**
  * Retrieves the current time in seconds using the monotonic clock.
  *
- * @return The current time in seconds as a double. Returns -1 if an error occurs.
+ * @return The current time in seconds as a double. Returns `-1` if an error occurs.
  */
 double get_time_in_seconds(void);

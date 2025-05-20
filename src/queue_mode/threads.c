@@ -1,12 +1,12 @@
 #include "threads.h"
 
-#define MAX_PATH_LEN 264
-
-atomic_size_t read_images = 0;
-atomic_size_t finished_reader_threads = 0;
-atomic_size_t written_images = 0;
-atomic_bool input_termination_sent = false;
-atomic_bool output_termination_sent = false;
+atomic_size_t read_images = 0;			   // Counter for read images
+atomic_size_t finished_reader_threads = 0; // Counter for finished reader threads
+atomic_size_t written_images = 0;		   // Counter for written images.
+atomic_bool input_termination_sent =
+	false; // Flag indicating whether input termination signal has been sent
+atomic_bool output_termination_sent =
+	false; // Flag indicating whether output termination signal has been sent
 
 void *reader_thread(void *arg) {
 	qthreads_info *info = (qthreads_info *)arg;
@@ -22,6 +22,7 @@ void *reader_thread(void *arg) {
 
 		start_time = get_time_in_seconds();
 		if (start_time == -1) {
+			error("Error in clock_gettime().\n");
 			break;
 		}
 
@@ -40,17 +41,18 @@ void *reader_thread(void *arg) {
 			continue;
 		}
 
-		if (!queue_push(info->input_q, dummy_img, width, height, path)) {
-			error("READER: Failed to push '%s' into input queue\n", path);
+		if (queue_push(info->input_q, dummy_img, width, height, path) != 0) {
+			error("READER: Failed to push '%s' into input queue.\n", path);
 			continue;
 		}
 
 		end_time = get_time_in_seconds();
 		if (end_time == -1) {
+			error("Error in clock_gettime().\n");
 			break;
 		}
-		printf("READER: It took %.6f seconds to load and add '%s' to input queue.\n",
-			   (end_time - start_time), path);
+		printf("READER: '%s' -> input queue in %.6f sec.\n", path,
+			   end_time - start_time);
 	}
 	atomic_fetch_add(&finished_reader_threads, 1);
 
@@ -77,6 +79,7 @@ void *worker_thread(void *arg) {
 	while (1) {
 		start_time = get_time_in_seconds();
 		if (start_time == -1) {
+			error("Error in clock_gettime().\n");
 			break;
 		}
 
@@ -101,8 +104,8 @@ void *worker_thread(void *arg) {
 		parallel_row(&out_node->image, &result_channel_image, out_node->width,
 					 out_node->height, *info->img_filter, info->pargs->threads_num);
 
-		if (!queue_push(info->output_q, result_channel_image, out_node->width,
-						out_node->height, out_node->filename)) {
+		if (queue_push(info->output_q, result_channel_image, out_node->width,
+					   out_node->height, out_node->filename) != 0) {
 			error("WORKER: Failed to push processed image to output queue.\n");
 			free_image_rgb(&out_node->image);
 			free_image_rgb(&result_channel_image);
@@ -113,13 +116,13 @@ void *worker_thread(void *arg) {
 
 		end_time = get_time_in_seconds();
 		if (end_time == -1) {
+			error("Error in clock_gettime().\n");
 			free_image_rgb(&out_node->image);
 			free(out_node);
 			break;
 		}
-		printf("WORKER: Getting from input queue, applying the filter, and adding "
-			   "'%s' to output queue took %.6f seconds.\n",
-			   out_node->filename, (end_time - start_time));
+		printf("WORKER: '%s' -> output queue in %.6f sec.\n", out_node->filename,
+			   end_time - start_time);
 
 		free_image_rgb(&out_node->image);
 		free(out_node);
@@ -149,6 +152,7 @@ void *writer_thread(void *arg) {
 	while (1) {
 		start_time = get_time_in_seconds();
 		if (start_time == -1) {
+			error("Error in clock_gettime().\n");
 			break;
 		}
 
@@ -187,14 +191,14 @@ void *writer_thread(void *arg) {
 
 		end_time = get_time_in_seconds();
 		if (end_time == -1) {
-			break;
+			error("Error in clock_gettime().\n");
 			free(result_image);
 			free_image_rgb(&out_node->image);
 			free(out_node);
+			break;
 		}
-		printf("WRITER: It took %.6f seconds to get the '%s' from output queue and "
-			   "save it.\n",
-			   (end_time - start_time), out_node->filename);
+		printf("WRITER: '%s' -> saved in %.6f sec.\n", out_node->filename,
+			   end_time - start_time);
 
 		free(result_image);
 		free_image_rgb(&out_node->image);

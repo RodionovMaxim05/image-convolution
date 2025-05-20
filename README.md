@@ -8,7 +8,7 @@
 
 ## Description
 
-Image-convolution is an image processing application that applies various convolution filters to images. It supports both sequential and parallel execution modes with different workload distribution strategies. The application is designed for benchmarking and comparing different parallelization approaches for image processing algorithms.
+Image-convolution is an image processing tool that applies convolution filters in sequential, parallel (with different workload distribution strategies), and queue-based pipeline modes. In queue mode, readers, workers, and writers operate concurrently in a producer-consumer model with memory-limited queues. The app is designed for benchmarking different parallelization strategies and thread scalability.
 
 ## Usage
 Basic Command:
@@ -30,7 +30,7 @@ Basic Command:
 | `--readers=<num>`  | Number of reader threads                                            |
 | `--workers=<num>`  | Number of worker threads                                            |
 | `--writers=<num>`  | Number of writer threads                                            |
-| `--mem_lim=<MiB>`  | Memory limit for queues in MiB (e.g., 10)        |                  |
+| `--mem_lim=<MiB>`  | Memory limit for queues in MiB (e.g. 10)                            |
 
 ### Available Filters
 | Name      | Description                                            | Kernel Size |

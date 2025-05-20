@@ -1,10 +1,10 @@
 #include "args.h"
 
-#define MODE_PREFIX_LEN 7
-#define THREAD_PREFIX_LEN 9
-#define QUEUE_ARGS_PREFIX_LEN 10
-#define NUM_OF_IMAGES_PREFIX_LEN 6
-#define MAX_PATH_LEN 264
+#define MODE_PREFIX_LEN 7		   // lenght of `--mode=`
+#define THREAD_PREFIX_LEN 9		   // lenght of `--thread=`
+#define NUM_OF_IMAGES_PREFIX_LEN 6 // lenght of '--num='
+#define QUEUE_ARGS_PREFIX_LEN                                                       \
+	10 // lenght of '--readers=', '--workers=', '--writers=' or '--mem_lim='
 #define NUM_OF_ARGS_FOR_QUEUE_MOD 5
 #define INITIAL_INDEX_FOR_QUEUE_MOD 5
 #define CHECK_NUMBER(num, str)                                                      \

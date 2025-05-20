@@ -1,5 +1,9 @@
 #include "queue_dispatch.h"
 
+/**
+ * Allocates separate arrays of `pthread_t` for each group: readers, workers, and
+ * writers, based on the number specified in the program arguments.
+ */
 int allocate_threads(qthreads_info *info) {
 	info->readers = malloc(info->pargs->readers_num * sizeof(pthread_t));
 	if (!info->readers) {
@@ -22,12 +26,19 @@ int allocate_threads(qthreads_info *info) {
 	return 0;
 }
 
+/**
+ * Deallocates memory previously allocated by `allocate_threads`.
+ */
 void free_threads(qthreads_info *info) {
 	free(info->readers);
 	free(info->workers);
 	free(info->writers);
 }
 
+/**
+ * Starts `num` threads that execute the function pointed to by `start_routine`.
+ * If thread creation fails, already created threads are cancelled.
+ */
 int create_thread_group(pthread_t *threads, uint8_t num,
 						void *(*start_routine)(void *), void *arg) {
 	for (uint8_t i = 0; i < num; ++i) {
@@ -44,6 +55,9 @@ int create_thread_group(pthread_t *threads, uint8_t num,
 	return 0;
 }
 
+/**
+ * Joins each thread in the provided array using `pthread_join()`.
+ */
 void join_thread_group(pthread_t *threads, uint8_t num) {
 	for (uint8_t i = 0; i < num; ++i) {
 		pthread_join(threads[i], NULL);

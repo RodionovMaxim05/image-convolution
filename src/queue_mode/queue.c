@@ -46,8 +46,8 @@ void queue_destroy(struct img_queue *img_q) {
 	pthread_cond_destroy(&img_q->cond_not_empty);
 }
 
-bool queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
-				char *filename) {
+int queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
+			   char *filename) {
 	pthread_mutex_lock(&img_q->push_mutex);
 
 	size_t img_weight = (size_t)width * (size_t)height * 3;
@@ -60,7 +60,7 @@ bool queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
 
 	img_info_node_t *node = malloc(sizeof(img_info_node_t));
 	if (!node) {
-		return false;
+		return -1;
 	}
 
 	node->image = img;
@@ -75,7 +75,7 @@ bool queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
 		if (!image_data) {
 			error("Failed to load image: %s\n", filename);
 			free(node);
-			return false;
+			return -1;
 		}
 
 		// Initialize RGB channels
@@ -85,7 +85,7 @@ bool queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
 			error("Failed to initialize image rgb for %s.\n", filename);
 			free(node);
 			stbi_image_free(image_data);
-			return false;
+			return -1;
 		}
 
 		split_image_into_rgb_channels(image_data, channel_image, width, height);
@@ -111,7 +111,7 @@ bool queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
 	pthread_cond_signal(&img_q->cond_not_empty);
 	pthread_mutex_unlock(&img_q->push_mutex);
 
-	return true;
+	return 0;
 }
 
 img_info_node_t *queue_pop(img_queue *img_q) {

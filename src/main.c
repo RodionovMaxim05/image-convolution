@@ -12,6 +12,10 @@
 #define NULL_TERMINATOR_LEN 1 // Terminating null character '\0'
 #define DIR_ACCESS_RIGHTS 0755
 
+/**
+ * Loads the input image, applies the specified filter using the selected execution
+ * mode, and saves the resulting image.
+ */
 static int default_mode(program_args args, struct filter image_filter) {
 	int width, height, channels;
 	unsigned char *image = NULL;
@@ -131,6 +135,10 @@ cleanup_and_err:
 	return -1;
 }
 
+/**
+ * Sets up directories, queues, and threads for reader-worker-writer pipeline.
+ * Processes multiple images concurrently using shared queues.
+ */
 static int queue_mode(program_args args, struct filter image_filter) {
 	if (mkdir(QUEUE_DIR_NAME, DIR_ACCESS_RIGHTS) == -1) {
 		if (errno != EEXIST) {
@@ -176,6 +184,10 @@ static int queue_mode(program_args args, struct filter image_filter) {
 	return 0;
 }
 
+/**
+ * Parses command-line arguments, loads the requested filter, and runs the
+ * convolution either in default mode or queue mode based on user input.
+ */
 int main(int argc, char *argv[]) {
 	program_args args = {NULL, NULL, NULL, 1, 0, 0, 0, 0, 0};
 	if (!parse_args(argc, argv, &args)) {
