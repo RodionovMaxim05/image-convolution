@@ -56,6 +56,6 @@ dkms.conf
 __pycache__
 build
 pics/
-*_cat.bmp
-*_monkey.bmp
+images/*_cat.bmp
+images/*_monkey.bmp
 output_queue_mode/

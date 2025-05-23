@@ -79,6 +79,10 @@ The project includes three types of tests:
 ```bash
 ./scripts/perf.sh <image_name>
 ```
+4) Queue mode performance analysis - evaluate execution time distribution across stages (reader, worker, writer) for various thread configurations under a memory limit:
+```bash
+./scripts/queue_benchmark.sh <num_of_imgs> <mem_lim>
+```
 
 ## Prerequisites for Benchmarks (`Performance benchmarks` and `Cache performance analysis`)
 Before running benchmarks, you need to set up a Python virtual environment and install dependencies:

@@ -34,13 +34,14 @@ def print_warning(message: str):
     print(f"{RED_ANSI}{message}{RESET_ANSI}\n")
 
 
-def analyze_execution_data(data):
+def analyze_execution_data(data, filter_data: bool):
     """
     Analyzes execution time data to compute the mean execution time and its confidence interval
     while performing outlier removal and normality testing.
 
     Args:
         data (array): A list or array of execution times.
+        filter_data (bool): If True, applies outlier filtering based on standard deviation.
 
     Returns:
         A tuple (mean_time, confidence_interval):
@@ -50,17 +51,20 @@ def analyze_execution_data(data):
     mean_time = np.mean(data)
     std_time = np.std(data, ddof=1)
 
-    # Removing outliers (greater than 3 standard deviations)
-    filtered_data = data[
-        (data > mean_time - 3 * std_time) & (data < mean_time + 3 * std_time)
-    ]
-    if len(data) - len(filtered_data) > 1:
-        print_warning("Too many emissions.")
+    if filter_data:
+        # Removing outliers (greater than 3 standard deviations)
+        filtered_data = data[
+            (data > mean_time - 3 * std_time) & (data < mean_time + 3 * std_time)
+        ]
+        if len(data) - len(filtered_data) > 1:
+            print_warning("Too many emissions.")
 
-    normal_test = stats.normaltest(filtered_data)
-    shapiro_test = stats.shapiro(filtered_data)
-    if normal_test.pvalue < 0.05 and shapiro_test.pvalue < 0.05:
-        print_warning("Data does not pass normality tests.")
+        normal_test = stats.normaltest(filtered_data)
+        shapiro_test = stats.shapiro(filtered_data)
+        if normal_test.pvalue < 0.05 and shapiro_test.pvalue < 0.05:
+            print_warning("Data does not pass normality tests.")
+    else:
+        filtered_data = data
 
     mean_time = np.mean(filtered_data)
     confidence_interval = stats.t.ppf(0.975, df=len(filtered_data) - 1) * stats.sem(
