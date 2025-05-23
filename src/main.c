@@ -159,7 +159,7 @@ static int queue_mode(program_args args, struct filter image_filter) {
 
 	char **file_paths = get_file_paths(args.img_path, args.img_count);
 	if (!file_paths) {
-		return -1;
+		goto cleanup_and_err;
 	}
 
 	qthreads_info info = {
@@ -173,15 +173,39 @@ static int queue_mode(program_args args, struct filter image_filter) {
 		.output_q = &output_queue,
 	};
 
-	if (start_threads(&info) != 0) {
-		return -1;
+	double start_time = get_time_in_seconds();
+	if (start_time == -1) {
+		error("Error in clock_gettime().\n");
+		goto cleanup_and_err;
 	}
+
+	if (start_threads(&info) != 0) {
+		goto cleanup_and_err;
+	}
+
+	double end_time = get_time_in_seconds();
+	if (end_time == -1) {
+		error("Error in clock_gettime().\n");
+		goto cleanup_and_err;
+	}
+	printf("The convolution for all images took %.6f. All images are in '%s' "
+		   "directory.\n",
+		   (end_time - start_time), QUEUE_DIR_NAME);
 
 	free_file_paths(file_paths, args.img_count);
 	queue_destroy(&input_queue);
 	queue_destroy(&output_queue);
 
 	return 0;
+
+cleanup_and_err:
+	if (file_paths) {
+		free_file_paths(file_paths, args.img_count);
+	}
+	queue_destroy(&input_queue);
+	queue_destroy(&output_queue);
+
+	return -1;
 }
 
 /**

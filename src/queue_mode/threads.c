@@ -2,7 +2,7 @@
 
 atomic_size_t read_images = 0;			   // Counter for read images
 atomic_size_t finished_reader_threads = 0; // Counter for finished reader threads
-atomic_size_t written_images = 0;		   // Counter for written images.
+atomic_size_t finished_worker_threads = 0; // Counter for finished worker threads
 atomic_bool input_termination_sent =
 	false; // Flag indicating whether input termination signal has been sent
 atomic_bool output_termination_sent =
@@ -51,19 +51,17 @@ void *reader_thread(void *arg) {
 			error("Error in clock_gettime().\n");
 			break;
 		}
-		printf("READER: '%s' -> input queue in %.6f sec.\n", path,
+		printf("READER: '%s' -> input queue in %.6f.\n", path,
 			   end_time - start_time);
 	}
 	atomic_fetch_add(&finished_reader_threads, 1);
 
-	// Sending termination signals
+	// Sending termination signals by the last thread
 	if (atomic_load(&finished_reader_threads) == info->pargs->readers_num &&
 		!atomic_exchange(&input_termination_sent, true)) {
 		for (uint8_t i = 0; i < info->pargs->workers_num; i++) {
 			queue_push(info->input_q, dummy_img, 0, 0, NULL);
 		}
-		printf("READER: Sent %d termination signals to workers.\n",
-			   info->pargs->workers_num);
 	}
 
 	printf("Reader end his work.\n");
@@ -112,7 +110,6 @@ void *worker_thread(void *arg) {
 			free(out_node);
 			break;
 		}
-		atomic_fetch_add(&written_images, 1);
 
 		end_time = get_time_in_seconds();
 		if (end_time == -1) {
@@ -121,22 +118,21 @@ void *worker_thread(void *arg) {
 			free(out_node);
 			break;
 		}
-		printf("WORKER: '%s' -> output queue in %.6f sec.\n", out_node->filename,
+		printf("WORKER: '%s' -> output queue in %.6f.\n", out_node->filename,
 			   end_time - start_time);
 
 		free_image_rgb(&out_node->image);
 		free(out_node);
 	}
+	atomic_fetch_add(&finished_worker_threads, 1);
 
-	// Sending termination signals
+	// Sending termination signals by the last thread
 	struct image_rgb dummy_img = {NULL, NULL, NULL};
-	if (atomic_load(&written_images) == info->pargs->img_count &&
+	if (atomic_load(&finished_worker_threads) == info->pargs->workers_num &&
 		!atomic_exchange(&output_termination_sent, true)) {
 		for (uint8_t i = 0; i < info->pargs->writers_num; i++) {
 			queue_push(info->output_q, dummy_img, 0, 0, NULL);
 		}
-		printf("WORKER: Sent %d termination signals to writers.\n",
-			   info->pargs->workers_num);
 	}
 
 	printf("Worker end his work.\n");
@@ -197,7 +193,7 @@ void *writer_thread(void *arg) {
 			free(out_node);
 			break;
 		}
-		printf("WRITER: '%s' -> saved in %.6f sec.\n", out_node->filename,
+		printf("WRITER: '%s' -> saved in %.6f.\n", out_node->filename,
 			   end_time - start_time);
 
 		free(result_image);

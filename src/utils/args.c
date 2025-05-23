@@ -1,4 +1,5 @@
 #include "args.h"
+#include <math.h>
 
 #define MODE_PREFIX_LEN 7		   // lenght of `--mode=`
 #define THREAD_PREFIX_LEN 9		   // lenght of `--thread=`
@@ -8,7 +9,7 @@
 #define NUM_OF_ARGS_FOR_QUEUE_MOD 5
 #define INITIAL_INDEX_FOR_QUEUE_MOD 5
 #define CHECK_NUMBER(num, str)                                                      \
-	if ((num) < 1) {                                                                \
+	if ((num) <= 0) {                                                               \
 		error("Invalid number of %s, required number > 0.\n", str);                 \
 		return false;                                                               \
 	}
@@ -108,9 +109,9 @@ bool parse_args(int argc, char *argv[], program_args *args) {
 				args->writers_num = res_int;
 
 			} else if (strncmp(argv[i], "--mem_lim=", QUEUE_ARGS_PREFIX_LEN) == 0) {
-				res_int = atoi(argv[i] + QUEUE_ARGS_PREFIX_LEN);
-				CHECK_NUMBER(res_int, "memory limit")
-				args->memory_lim = (size_t)res_int * (size_t)BYTES_IN_MEBIBYTE;
+				double res_double = atof(argv[i] + QUEUE_ARGS_PREFIX_LEN);
+				CHECK_NUMBER(res_double, "memory limit")
+				args->memory_lim = (size_t)ceil(res_double * BYTES_IN_MEBIBYTE);
 
 			} else {
 				error("Invalid argument '%s' for queue mode.\n", argv[i]);

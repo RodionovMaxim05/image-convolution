@@ -108,8 +108,11 @@ int queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
 		img_q->head = node;
 	}
 
-	pthread_cond_signal(&img_q->cond_not_empty);
 	pthread_mutex_unlock(&img_q->push_mutex);
+
+	pthread_mutex_lock(&img_q->pop_mutex);
+	pthread_cond_signal(&img_q->cond_not_empty);
+	pthread_mutex_unlock(&img_q->pop_mutex);
 
 	return 0;
 }
@@ -139,7 +142,10 @@ img_info_node_t *queue_pop(img_queue *img_q) {
 	atomic_fetch_sub(&img_q->current_mem_usage,
 					 ((size_t)out_node->width * (size_t)out_node->height * 3));
 
+	pthread_mutex_lock(&img_q->push_mutex);
 	pthread_cond_signal(&img_q->cond_not_full);
+	pthread_mutex_unlock(&img_q->push_mutex);
+
 	pthread_mutex_unlock(&img_q->pop_mutex);
 
 	return out_node;
