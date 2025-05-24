@@ -1,6 +1,6 @@
 #include "../src/convolution/filter_application.h"
 
-#include "utils_for_tests.c"
+#include "utils_for_tests.h"
 
 #define IMAGE_WIDTH 2
 #define IMAGE_HEIGHT 2
@@ -97,4 +97,18 @@ void test_identity_filter(void **state) {
 	free_filter(&filter);
 	free_image_rgb(&channel_image);
 	free_image_rgb(&result_channel_image);
+}
+
+int main(void) {
+	// Initialize random number generator with current time
+	srand((unsigned int)time(NULL));
+
+	const struct CMUnitTest core_tests[] = {
+		cmocka_unit_test(test_create_filter),
+		cmocka_unit_test(test_split_assemble_channels),
+		cmocka_unit_test(test_identity_filter),
+	};
+
+	return cmocka_run_group_tests_name("Core Functionality Tests", core_tests, NULL,
+									   NULL);
 }

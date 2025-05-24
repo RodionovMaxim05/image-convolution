@@ -1,7 +1,7 @@
 #include "../src/convolution/filter_application.h"
 #include "../src/convolution/parallel_dispatch.h"
 
-#include "utils_for_tests.c"
+#include "utils_for_tests.h"
 
 /**
  * A helper function that runs a parallel test for a given parallel implementation
@@ -190,4 +190,23 @@ void test_parallel_block_with_random_image(void **state) {
 	struct image_rgb channel_image = create_test_image(width, height);
 
 	run_test_with_filter(true, parallel_block, &channel_image, width, height, 3);
+}
+
+int main(void) {
+	// Initialize random number generator with current time
+	srand((unsigned int)time(NULL));
+
+	const struct CMUnitTest parallel_tests[] = {
+		cmocka_unit_test(test_parallel_pixel_with_default_image),
+		cmocka_unit_test(test_parallel_pixel_with_random_image),
+		cmocka_unit_test(test_parallel_row_with_default_image),
+		cmocka_unit_test(test_parallel_row_with_random_image),
+		cmocka_unit_test(test_parallel_column_with_default_image),
+		cmocka_unit_test(test_parallel_column_with_random_image),
+		cmocka_unit_test(test_parallel_block_with_default_image),
+		cmocka_unit_test(test_parallel_block_with_random_image),
+	};
+
+	return cmocka_run_group_tests_name("Parallel Application Tests", parallel_tests,
+									   NULL, NULL);
 }

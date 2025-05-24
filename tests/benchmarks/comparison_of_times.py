@@ -100,7 +100,9 @@ def main() -> None:
             print(f"Running measurements: {filter} filter - {mode} mode")
             times = run_program(filter, mode)
 
-            mean_time, confidence_interval = analyze_execution_data(times)
+            mean_time, confidence_interval = analyze_execution_data(
+                times, filter_data=True
+            )
             results[filter]["means"].append(mean_time)
             results[filter]["conf_inter"].append(confidence_interval)
 

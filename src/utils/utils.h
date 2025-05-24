@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -8,6 +9,7 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define error(...) (fprintf(stderr, __VA_ARGS__))
+#define BYTES_IN_MEBIBYTE (1024.0 * 1024.0)
 
 /**
  * Represents an image split into its red, green, and blue channels.
@@ -66,18 +68,8 @@ void assemble_image_from_rgb_channels(unsigned char *image,
 									  int height);
 
 /**
- * Extracts the filename from a given file path.
- *
- * @param path The full file path.
- *
- * @return A pointer to the start of the filename in the path. If no / is found, the
- * entire path is returned.
- */
-const char *extract_filename(const char *path);
-
-/**
  * Retrieves the current time in seconds using the monotonic clock.
  *
- * @return The current time in seconds as a double. Returns -1 if an error occurs.
+ * @return The current time in seconds as a double. Returns `-1` if an error occurs.
  */
 double get_time_in_seconds(void);

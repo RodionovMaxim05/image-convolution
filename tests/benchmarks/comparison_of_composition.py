@@ -106,7 +106,9 @@ def main() -> None:
 
         data_file.write(f"Result for {filter1} + {filter2}\n")
 
-        mean_time, confidence_interval = analyze_execution_data(seq_time)
+        mean_time, confidence_interval = analyze_execution_data(
+            seq_time, filter_data=True
+        )
         results[num]["means"].append(mean_time)
         results[num]["conf_inter"].append(confidence_interval)
 

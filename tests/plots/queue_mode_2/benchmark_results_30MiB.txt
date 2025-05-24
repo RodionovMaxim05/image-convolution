@@ -1,0 +1,56 @@
+Memory Limit: 30 MiB
+	Config: Readers=1 Workers=1 Writers=1
+			Reader result: 0.12 ± 0.01 s
+			Worker result: 0.34 ± 0.003 s
+			Writer result: 0.344 ± 0.004 s
+		Execution result: 3.101 ± 0.004 s
+
+	Config: Readers=1 Workers=2 Writers=1
+			Reader result: 0.067 ± 0.006 s
+			Worker result: 0.393 ± 0.007 s
+			Writer result: 0.22 ± 0.02 s
+		Execution result: 1.94 ± 0.01 s
+
+	Config: Readers=1 Workers=3 Writers=1
+			Reader result: 0.068 ± 0.004 s
+			Worker result: 0.56 ± 0.01 s
+			Writer result: 0.23 ± 0.02 s
+		Execution result: 2.0 ± 0.2 s
+
+	Config: Readers=1 Workers=3 Writers=2
+			Reader result: 0.069 ± 0.005 s
+			Worker result: 0.56 ± 0.01 s
+			Writer result: 0.42 ± 0.03 s
+		Execution result: 1.815 ± 0.009 s
+
+	Config: Readers=2 Workers=3 Writers=1
+			Reader result: 0.123 ± 0.007 s
+			Worker result: 0.56 ± 0.01 s
+			Writer result: 0.21 ± 0.02 s
+		Execution result: 1.85 ± 0.01 s
+
+	Config: Readers=2 Workers=3 Writers=2
+			Reader result: 0.122 ± 0.008 s
+			Worker result: 0.57 ± 0.01 s
+			Writer result: 0.4 ± 0.02 s
+		Execution result: 1.84 ± 0.01 s
+
+	Config: Readers=1 Workers=4 Writers=1
+			Reader result: 0.064 ± 0.002 s
+			Worker result: 0.71 ± 0.02 s
+			Writer result: 0.21 ± 0.02 s
+		Execution result: 1.85 ± 0.006 s
+
+	Config: Readers=3 Workers=3 Writers=1
+			Reader result: 0.16 ± 0.01 s
+			Worker result: 0.58 ± 0.01 s
+			Writer result: 0.21 ± 0.02 s
+		Execution result: 1.883 ± 0.009 s
+
+	Config: Readers=2 Workers=4 Writers=2
+			Reader result: 0.125 ± 0.008 s
+			Worker result: 0.73 ± 0.02 s
+			Writer result: 0.4 ± 0.03 s
+		Execution result: 1.889 ± 0.008 s
+
+

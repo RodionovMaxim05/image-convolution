@@ -1,0 +1,8 @@
+Memory Limit: 55 MiB
+	Config: Readers=1 Workers=1 Writers=1
+			Reader result: 0.048 ± 0.001 s
+			Worker result: 0.2 ± 0.004 s
+			Writer result: 0.204 ± 0.006 s
+		Execution result: 1.83 ± 0.01 s
+
+

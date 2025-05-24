@@ -91,7 +91,7 @@ def main() -> None:
             ["cache-references", "cache-misses", "L1-dcache-load_misses"],
             [c_ref, c_mis, l1_mis],
         ):
-            mean_val, conf_inter = analyze_execution_data(data)
+            mean_val, conf_inter = analyze_execution_data(data, filter_data=True)
             rounded_mean, rounded_error = int(mean_val), int(conf_inter)
             results[metric]["means"].append(rounded_mean)
             results[metric]["conf_inter"].append(rounded_error)

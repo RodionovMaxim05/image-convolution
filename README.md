@@ -8,7 +8,7 @@
 
 ## Description
 
-Image-convolution is an image processing application that applies various convolution filters to images. It supports both sequential and parallel execution modes with different workload distribution strategies. The application is designed for benchmarking and comparing different parallelization approaches for image processing algorithms.
+Image-convolution is an image processing tool that applies convolution filters in sequential, parallel (with different workload distribution strategies), and queue-based pipeline modes. In queue mode, readers, workers, and writers operate concurrently in a producer-consumer model with memory-limited queues. The app is designed for benchmarking different parallelization strategies and thread scalability.
 
 ## Usage
 Basic Command:
@@ -16,14 +16,21 @@ Basic Command:
 ./build/src/image-convolution <image_path> <filter_name> --mode=<mode> [--thread=<num>]
 ```
 ### Options
-| Parameter          | Description                                                         | Required |
-|--------------------|---------------------------------------------------------------------|----------|
-| `<image_path>`     | Path to input image or `--default-image` (predefined default image) | Yes      |
-| `<filter_name>`    | Filter to apply (see [Available Filters](#available-filters))       | Yes      |
-| `--mode=<mode>`    | Execution mode: `seq`, `pixel`, `row`, `column`, `block`            | Yes      |
-| `--thread=<num>`   | Number of threads (for parallel modes)                              | No*      |
+| Parameter          | Description                                                                 |
+|--------------------|-----------------------------------------------------------------------------|
+| `<image_path>`     | Path to input image or `--default-image` (predefined default image)         |
+| `<filter_name>`    | Filter to apply (see [Available Filters](#available-filters))               |
+| `--mode=<mode>`    | Execution mode: `seq`, `pixel`, `row`, `column`, `block` or `queue`         |
+| `--thread=<num>`   | Number of threads to use for parallel convolution (ignored if `--mode=seq`) |
 
-*Required for all modes except seq
+#### Queue options
+| Parameter          | Description                                                         |
+|--------------------|---------------------------------------------------------------------|
+| `--num=<images>`   | Number of images to process                                         |
+| `--readers=<num>`  | Number of reader threads                                            |
+| `--workers=<num>`  | Number of worker threads                                            |
+| `--writers=<num>`  | Number of writer threads                                            |
+| `--mem_lim=<MiB>`  | Memory limit for queues in MiB (e.g. 10)                            |
 
 ### Available Filters
 | Name      | Description                                            | Kernel Size |
@@ -47,6 +54,10 @@ Basic Command:
 ```bash
 ./build/src/image-convolution images/cat.bmp gbl --mode=block --thread=4
 ```
+3) Queue-Based pipeline processing:
+```bash
+./build/src/image-convolution images mbl --mode=queue --thread=2 --num=25 --readers=2 --workers=3 --writers=2 --mem_lim=15
+```
 
 ## Build
 To build the project:
@@ -67,6 +78,10 @@ The project includes three types of tests:
 3) Cache performance analysis - analyze cache behavior using `perf`:
 ```bash
 ./scripts/perf.sh <image_name>
+```
+4) Queue mode performance analysis - evaluate execution time distribution across stages (reader, worker, writer) for various thread configurations under a memory limit:
+```bash
+./scripts/queue_benchmark.sh <num_of_imgs> <mem_lim>
 ```
 
 ## Prerequisites for Benchmarks (`Performance benchmarks` and `Cache performance analysis`)

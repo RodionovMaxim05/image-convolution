@@ -48,15 +48,6 @@ void assemble_image_from_rgb_channels(unsigned char *image,
 	}
 }
 
-const char *extract_filename(const char *path) {
-	const char *last_slash = strrchr(path, '/');
-	if (last_slash == NULL) {
-		return path;
-	}
-
-	return last_slash + 1;
-}
-
 double get_time_in_seconds(void) {
 	struct timespec time;
 	if (clock_gettime(CLOCK_MONOTONIC, &time) != 0) {

@@ -1,0 +1,26 @@
+Memory Limit: 30 MiB
+	Config: Readers=1 Workers=1 Writers=1
+			Reader result: 0.082 ± 0.006 s
+			Worker result: 0.199 ± 0.004 s
+			Writer result: 0.203 ± 0.006 s
+		Execution result: 1.832 ± 0.003 s
+
+	Config: Readers=1 Workers=2 Writers=1
+			Reader result: 0.066 ± 0.002 s
+			Worker result: 0.367 ± 0.007 s
+			Writer result: 0.2 ± 0.01 s
+		Execution result: 1.759 ± 0.006 s
+
+	Config: Readers=1 Workers=1 Writers=2
+			Reader result: 0.082 ± 0.006 s
+			Worker result: 0.201 ± 0.004 s
+			Writer result: 0.42 ± 0.02 s
+		Execution result: 1.91 ± 0.08 s
+
+	Config: Readers=2 Workers=1 Writers=1
+			Reader result: 0.15 ± 0.01 s
+			Worker result: 0.203 ± 0.005 s
+			Writer result: 0.22 ± 0.01 s
+		Execution result: 2.0 ± 0.1 s
+
+
