@@ -44,7 +44,6 @@ void *process_dynamic(void *arg) {
 			break;
 		}
 
-
 		size_t block_x = block_index % data->num_cols;
 		size_t block_y = block_index / data->num_cols;
 
