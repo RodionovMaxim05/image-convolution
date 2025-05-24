@@ -12,11 +12,11 @@ from utils import (
 # Configuration constants
 PROGRAM_PATH = "./build/src/image-convolution"
 IMAGE_DIR = "input_queue_mode"
-THREAD_NUM = 2
-OUTPUT_DIR = f"tests/plots/queue_mode"
+NUM_IMAGES = int(sys.argv[1])
+MEM_LIM = int(sys.argv[2])
 NUM_RUNS = 40
-NUM_IMAGES = sys.argv[1]
-MEM_LIM = sys.argv[2]
+THREAD_NUM = 2
+OUTPUT_DIR = f"tests/plots/queue_mode_{THREAD_NUM}"
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
