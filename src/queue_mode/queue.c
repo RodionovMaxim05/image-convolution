@@ -73,7 +73,7 @@ int queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
 		unsigned char *image_data =
 			stbi_load(filename, &width, &height, &channels, 3);
 		if (!image_data) {
-			error("Failed to load image: %s\n", filename);
+			fprintf(stderr, "Failed to load image: %s\n", filename);
 			free(node);
 			return -1;
 		}
@@ -82,7 +82,7 @@ int queue_push(img_queue *img_q, struct image_rgb img, int width, int height,
 		struct image_rgb channel_image = initialize_image_rgb(width, height);
 		if (channel_image.red == NULL || channel_image.green == NULL ||
 			channel_image.blue == NULL) {
-			error("Failed to initialize image rgb for %s.\n", filename);
+			fprintf(stderr, "Failed to initialize image rgb for %s.\n", filename);
 			free(node);
 			stbi_image_free(image_data);
 			return -1;

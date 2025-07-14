@@ -66,7 +66,7 @@ void join_thread_group(pthread_t *threads, uint8_t num) {
 
 int start_threads(qthreads_info *info) {
 	if (allocate_threads(info) != 0) {
-		error("Failed to allocate thread memory\n");
+		fprintf(stderr, "Failed to allocate thread memory\n");
 		return -1;
 	}
 
@@ -74,19 +74,19 @@ int start_threads(qthreads_info *info) {
 
 	if (create_thread_group(info->readers, info->pargs->readers_num, reader_thread,
 							info) != 0) {
-		error("Failed to create thread.\n");
+		fprintf(stderr, "Failed to create thread.\n");
 		return -1;
 	}
 
 	if (create_thread_group(info->workers, info->pargs->workers_num, worker_thread,
 							info) != 0) {
-		error("Failed to create thread.\n");
+		fprintf(stderr, "Failed to create thread.\n");
 		return -1;
 	}
 
 	if (create_thread_group(info->writers, info->pargs->writers_num, writer_thread,
 							info) != 0) {
-		error("Failed to create thread.\n");
+		fprintf(stderr, "Failed to create thread.\n");
 		return -1;
 	}
 

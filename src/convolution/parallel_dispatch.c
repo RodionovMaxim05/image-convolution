@@ -29,7 +29,7 @@ int parallel_filter(struct image_rgb *input_image, struct image_rgb *output_imag
 
 		if (pthread_create(&threads[i], NULL, process_dynamic,
 						   (void *)&thread_data_array[i]) != 0) {
-			error("Failed to create a thread\n");
+			fprintf(stderr, "Failed to create a thread\n");
 			for (int j = 0; j < i; j++) {
 				pthread_cancel(threads[j]);
 			}

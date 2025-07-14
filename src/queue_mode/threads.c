@@ -22,12 +22,12 @@ void *reader_thread(void *arg) {
 
 		start_time = get_time_in_seconds();
 		if (start_time == -1) {
-			error("Error in clock_gettime().\n");
+			fprintf(stderr, "Error in clock_gettime().\n");
 			break;
 		}
 
 		if (!stbi_info(path, &width, &height, &channels)) {
-			error("READER: Failed to read image info from '%s'\n", path);
+			fprintf(stderr, "READER: Failed to read image info from '%s'\n", path);
 			continue;
 		}
 
@@ -35,20 +35,22 @@ void *reader_thread(void *arg) {
 		double weight_mib = (double)(width * height * 3) / BYTES_IN_MEBIBYTE;
 		double memory_lim_mib = (double)info->pargs->memory_lim / BYTES_IN_MEBIBYTE;
 		if (info->pargs->memory_lim < ((size_t)width * (size_t)height * 3)) {
-			error("'%s' (%.1f MiB) is larger than the maximum specified size - %.1f "
-				  "MiB.\n",
-				  path, weight_mib, memory_lim_mib);
+			fprintf(
+				stderr,
+				"'%s' (%.1f MiB) is larger than the maximum specified size - %.1f "
+				"MiB.\n",
+				path, weight_mib, memory_lim_mib);
 			continue;
 		}
 
 		if (queue_push(info->input_q, dummy_img, width, height, path) != 0) {
-			error("READER: Failed to push '%s' into input queue.\n", path);
+			fprintf(stderr, "READER: Failed to push '%s' into input queue.\n", path);
 			continue;
 		}
 
 		end_time = get_time_in_seconds();
 		if (end_time == -1) {
-			error("Error in clock_gettime().\n");
+			fprintf(stderr, "Error in clock_gettime().\n");
 			break;
 		}
 		printf("READER: '%s' -> input queue in %.6f.\n", path,
@@ -77,7 +79,7 @@ void *worker_thread(void *arg) {
 	while (1) {
 		start_time = get_time_in_seconds();
 		if (start_time == -1) {
-			error("Error in clock_gettime().\n");
+			fprintf(stderr, "Error in clock_gettime().\n");
 			break;
 		}
 
@@ -93,7 +95,8 @@ void *worker_thread(void *arg) {
 			initialize_image_rgb(out_node->width, out_node->height);
 		if (!result_channel_image.red || !result_channel_image.green ||
 			!result_channel_image.blue) {
-			error("WORKER: Memory allocation error for result_channel_image.\n");
+			fprintf(stderr,
+					"WORKER: Memory allocation error for result_channel_image.\n");
 			free_image_rgb(&out_node->image);
 			free(out_node);
 			continue;
@@ -104,7 +107,8 @@ void *worker_thread(void *arg) {
 
 		if (queue_push(info->output_q, result_channel_image, out_node->width,
 					   out_node->height, out_node->filename) != 0) {
-			error("WORKER: Failed to push processed image to output queue.\n");
+			fprintf(stderr,
+					"WORKER: Failed to push processed image to output queue.\n");
 			free_image_rgb(&out_node->image);
 			free_image_rgb(&result_channel_image);
 			free(out_node);
@@ -113,7 +117,7 @@ void *worker_thread(void *arg) {
 
 		end_time = get_time_in_seconds();
 		if (end_time == -1) {
-			error("Error in clock_gettime().\n");
+			fprintf(stderr, "Error in clock_gettime().\n");
 			free_image_rgb(&out_node->image);
 			free(out_node);
 			break;
@@ -148,7 +152,7 @@ void *writer_thread(void *arg) {
 	while (1) {
 		start_time = get_time_in_seconds();
 		if (start_time == -1) {
-			error("Error in clock_gettime().\n");
+			fprintf(stderr, "Error in clock_gettime().\n");
 			break;
 		}
 
@@ -163,7 +167,7 @@ void *writer_thread(void *arg) {
 		unsigned char *result_image =
 			malloc((size_t)out_node->width * (size_t)out_node->height * 3);
 		if (!result_image) {
-			error("WRITER: Memory allocation failed for output image\n");
+			fprintf(stderr, "WRITER: Memory allocation failed for output image\n");
 			free_image_rgb(&out_node->image);
 			free(out_node);
 			break;
@@ -178,7 +182,7 @@ void *writer_thread(void *arg) {
 
 		if (!stbi_write_bmp(out_path, out_node->width, out_node->height, 3,
 							result_image)) {
-			error("WRITER: Failed to save image '%s'\n", out_path);
+			fprintf(stderr, "WRITER: Failed to save image '%s'\n", out_path);
 			free(result_image);
 			free_image_rgb(&out_node->image);
 			free(out_node);
@@ -187,7 +191,7 @@ void *writer_thread(void *arg) {
 
 		end_time = get_time_in_seconds();
 		if (end_time == -1) {
-			error("Error in clock_gettime().\n");
+			fprintf(stderr, "Error in clock_gettime().\n");
 			free(result_image);
 			free_image_rgb(&out_node->image);
 			free(out_node);

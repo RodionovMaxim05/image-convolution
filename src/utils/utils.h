@@ -8,7 +8,6 @@
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
-#define error(...) (fprintf(stderr, __VA_ARGS__))
 #define BYTES_IN_MEBIBYTE (1024.0 * 1024.0)
 
 /**

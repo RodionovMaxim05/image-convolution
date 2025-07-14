@@ -27,7 +27,7 @@ static int default_mode(program_args args, struct filter image_filter) {
 	// Load image
 	image = stbi_load(args.img_path, &width, &height, &channels, 3);
 	if (!image) {
-		error("Could not open or find the image!\n");
+		fprintf(stderr, "Could not open or find the image!\n");
 		goto cleanup_and_err;
 	}
 
@@ -35,7 +35,7 @@ static int default_mode(program_args args, struct filter image_filter) {
 	channel_image = initialize_image_rgb(width, height);
 	if (channel_image.red == NULL || channel_image.green == NULL ||
 		channel_image.blue == NULL) {
-		error("Memory allocation error for channel_image.\n");
+		fprintf(stderr, "Memory allocation error for channel_image.\n");
 		goto cleanup_and_err;
 	}
 
@@ -45,14 +45,14 @@ static int default_mode(program_args args, struct filter image_filter) {
 	result_channel_image = initialize_image_rgb(width, height);
 	if (result_channel_image.red == NULL || result_channel_image.green == NULL ||
 		result_channel_image.blue == NULL) {
-		error("Memory allocation error for result_channel_image.\n");
+		fprintf(stderr, "Memory allocation error for result_channel_image.\n");
 		goto cleanup_and_err;
 	}
 
 	// Apply convolution
 	double start_time = get_time_in_seconds();
 	if (start_time == -1) {
-		error("Error in clock_gettime().\n");
+		fprintf(stderr, "Error in clock_gettime().\n");
 		goto cleanup_and_err;
 	}
 
@@ -73,25 +73,25 @@ static int default_mode(program_args args, struct filter image_filter) {
 		sequential_application(&channel_image, &result_channel_image, width, height,
 							   image_filter);
 	} else {
-		error("Unknown mode name: %s\n", args.mode);
+		fprintf(stderr, "Unknown mode name: %s\n", args.mode);
 		goto cleanup_and_err;
 	}
 
 	double end_time = get_time_in_seconds();
 	if (end_time == -1) {
-		error("Error in clock_gettime().\n");
+		fprintf(stderr, "Error in clock_gettime().\n");
 		goto cleanup_and_err;
 	}
 
 	if (return_value != 0) {
-		error("Failed to create thread.\n");
+		fprintf(stderr, "Failed to create thread.\n");
 		goto cleanup_and_err;
 	}
 
 	// Assemble and save result
 	result_image = malloc((size_t)width * (size_t)height * 3);
 	if (!result_image) {
-		error("Memory allocation error for result_image.\n");
+		fprintf(stderr, "Memory allocation error for result_image.\n");
 		goto cleanup_and_err;
 	}
 
@@ -103,7 +103,7 @@ static int default_mode(program_args args, struct filter image_filter) {
 		malloc(PATH_PREFIX_LEN + UNDERSCORE_COUNT + strlen(file_name) +
 			   strlen(args.mode) + strlen(args.filter_name) + NULL_TERMINATOR_LEN);
 	if (!output_file_path) {
-		error("Memory allocation error for output_file_path.\n");
+		fprintf(stderr, "Memory allocation error for output_file_path.\n");
 		goto cleanup_and_err;
 	}
 
@@ -142,18 +142,18 @@ cleanup_and_err:
 static int queue_mode(program_args args, struct filter image_filter) {
 	if (mkdir(QUEUE_DIR_NAME, DIR_ACCESS_RIGHTS) == -1) {
 		if (errno != EEXIST) {
-			error("Error creating directory.\n");
+			fprintf(stderr, "Error creating directory.\n");
 			return 1;
 		}
 	}
 
 	img_queue input_queue, output_queue;
 	if (queue_init(&input_queue, args.memory_lim, true) != 0) {
-		error("Memory allocation error for input_queue.\n");
+		fprintf(stderr, "Memory allocation error for input_queue.\n");
 	}
 
 	if (queue_init(&output_queue, args.memory_lim, false) != 0) {
-		error("Memory allocation error for output_queue.\n");
+		fprintf(stderr, "Memory allocation error for output_queue.\n");
 		queue_destroy(&input_queue);
 	}
 
@@ -175,7 +175,7 @@ static int queue_mode(program_args args, struct filter image_filter) {
 
 	double start_time = get_time_in_seconds();
 	if (start_time == -1) {
-		error("Error in clock_gettime().\n");
+		fprintf(stderr, "Error in clock_gettime().\n");
 		goto cleanup_and_err;
 	}
 
@@ -185,7 +185,7 @@ static int queue_mode(program_args args, struct filter image_filter) {
 
 	double end_time = get_time_in_seconds();
 	if (end_time == -1) {
-		error("Error in clock_gettime().\n");
+		fprintf(stderr, "Error in clock_gettime().\n");
 		goto cleanup_and_err;
 	}
 	printf("The convolution for all images took %.6f. All images are in '%s' "
@@ -249,14 +249,14 @@ int main(int argc, char *argv[]) {
 			FAST_BLUR_SIZE, FAST_BLUR_FACTOR, FAST_BLUR_BIAS, fast_blur,
 			MOTION_BLUR_SIZE, MOTION_BLUR_FACTOR, MOTION_BLUR_BIAS, motion_blur);
 	} else {
-		error("Unknown filter name: %s\n", args.filter_name);
+		fprintf(stderr, "Unknown filter name: %s\n", args.filter_name);
 		if (image_filter.kernel != NULL) {
 			free_filter(&image_filter);
 		}
 	}
 
 	if (image_filter.kernel == NULL) {
-		error("Memory allocation error for filter.\n");
+		fprintf(stderr, "Memory allocation error for filter.\n");
 		return -1;
 	}
 

@@ -10,7 +10,7 @@
 #define INITIAL_INDEX_FOR_QUEUE_MOD 5
 #define CHECK_NUMBER(num, str)                                                      \
 	if ((num) <= 0) {                                                               \
-		error("Invalid number of %s, required number > 0.\n", str);                 \
+		fprintf(stderr, "Invalid number of %s, required number > 0.\n", str);       \
 		return false;                                                               \
 	}
 
@@ -24,7 +24,8 @@ bool parse_args(int argc, char *argv[], program_args *args) {
 		"  --mem_lim=<MiB>        Memory limit for queues in MiB (e.g., 10).\n\n";
 
 	if (argc < 4) {
-		error(
+		fprintf(
+			stderr,
 			"Usage:\n"
 			"  %s <image_path | --default-image> <filter_name> --mode=seq\n"
 			"  %s <image_path | --default-image> <filter_name> "
@@ -49,10 +50,11 @@ bool parse_args(int argc, char *argv[], program_args *args) {
 			"convolution.\n"
 			"                         (Ignored if --mode=seq)\n\n",
 			argv[0], argv[0], argv[0]);
-		error("%s", queue_options);
-		error("Available Filters:\n");
+		fprintf(stderr, "%s", queue_options);
+		fprintf(stderr, "Available Filters:\n");
 		for (int i = 0; i < NUM_OF_FILTERS; i++) {
-			error("  %-22s %s\n", filters_info[i].name, filters_info[i].description);
+			fprintf(stderr, "  %-22s %s\n", filters_info[i].name,
+					filters_info[i].description);
 		}
 		return false;
 	}
@@ -62,7 +64,7 @@ bool parse_args(int argc, char *argv[], program_args *args) {
 	args->filter_name = argv[2];
 
 	if (strncmp(argv[3], "--mode=", MODE_PREFIX_LEN) != 0) {
-		error("Missing --mode argument\n");
+		fprintf(stderr, "Missing --mode argument\n");
 		return false;
 	}
 	args->mode = argv[3] + MODE_PREFIX_LEN;
@@ -71,7 +73,7 @@ bool parse_args(int argc, char *argv[], program_args *args) {
 
 	if (strcmp(args->mode, "seq") != 0) {
 		if (strncmp(argv[4], "--thread=", THREAD_PREFIX_LEN) != 0) {
-			error("Missing --thread argument\n");
+			fprintf(stderr, "Missing --thread argument\n");
 			return false;
 		}
 		res_int = atoi(argv[4] + THREAD_PREFIX_LEN);
@@ -81,8 +83,8 @@ bool parse_args(int argc, char *argv[], program_args *args) {
 
 	if (strcmp(args->mode, "queue") == 0) {
 		if (argc < INITIAL_INDEX_FOR_QUEUE_MOD + NUM_OF_ARGS_FOR_QUEUE_MOD) {
-			error("Missing queue mode parameters.\n\n");
-			error("%s", queue_options);
+			fprintf(stderr, "Missing queue mode parameters.\n\n");
+			fprintf(stderr, "%s", queue_options);
 			return false;
 		}
 
@@ -114,7 +116,7 @@ bool parse_args(int argc, char *argv[], program_args *args) {
 				args->memory_lim = (size_t)ceil(res_double * BYTES_IN_MEBIBYTE);
 
 			} else {
-				error("Invalid argument '%s' for queue mode.\n", argv[i]);
+				fprintf(stderr, "Invalid argument '%s' for queue mode.\n", argv[i]);
 
 				return false;
 			}
@@ -136,13 +138,13 @@ const char *extract_filename(const char *path) {
 char **get_file_paths(const char *dir_path, size_t file_count) {
 	DIR *dir = opendir(dir_path);
 	if (!dir) {
-		error("Failed to open directory '%s'.\n", dir_path);
+		fprintf(stderr, "Failed to open directory '%s'.\n", dir_path);
 		return NULL;
 	}
 
 	char **file_paths = (char **)malloc(file_count * sizeof(char *));
 	if (!file_paths) {
-		error("Memory allocation error for file_paths.\n");
+		fprintf(stderr, "Memory allocation error for file_paths.\n");
 		closedir(dir);
 		return NULL;
 	}
