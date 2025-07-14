@@ -39,12 +39,12 @@ void free_threads(qthreads_info *info) {
  * Starts `num` threads that execute the function pointed to by `start_routine`.
  * If thread creation fails, already created threads are cancelled.
  */
-int create_thread_group(pthread_t *threads, uint8_t num,
+int create_thread_group(pthread_t *threads, size_t num,
 						void *(*start_routine)(void *), void *arg) {
-	for (uint8_t i = 0; i < num; ++i) {
+	for (size_t i = 0; i < num; ++i) {
 		if (pthread_create(&threads[i], NULL, start_routine, arg) != 0) {
 			// Cancel successfully created threads
-			for (uint8_t j = 0; j < i; ++j) {
+			for (size_t j = 0; j < i; ++j) {
 				pthread_cancel(threads[j]);
 			}
 
@@ -58,8 +58,8 @@ int create_thread_group(pthread_t *threads, uint8_t num,
 /**
  * Joins each thread in the provided array using `pthread_join()`.
  */
-void join_thread_group(pthread_t *threads, uint8_t num) {
-	for (uint8_t i = 0; i < num; ++i) {
+void join_thread_group(pthread_t *threads, size_t num) {
+	for (size_t i = 0; i < num; ++i) {
 		pthread_join(threads[i], NULL);
 	}
 }

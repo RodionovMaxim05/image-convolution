@@ -33,10 +33,10 @@ typedef struct {
 	const char *mode;
 	int threads_num;
 
-	uint8_t img_count;
-	uint8_t readers_num;
-	uint8_t workers_num;
-	uint8_t writers_num;
+	size_t img_count;
+	size_t readers_num;
+	size_t workers_num;
+	size_t writers_num;
 	size_t memory_lim;
 } program_args;
 

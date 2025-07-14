@@ -61,7 +61,7 @@ void *reader_thread(void *arg) {
 	// Sending termination signals by the last thread
 	if (atomic_load(&finished_reader_threads) == info->pargs->readers_num &&
 		!atomic_exchange(&input_termination_sent, true)) {
-		for (uint8_t i = 0; i < info->pargs->workers_num; i++) {
+		for (size_t i = 0; i < info->pargs->workers_num; i++) {
 			queue_push(info->input_q, dummy_img, 0, 0, NULL);
 		}
 	}
@@ -134,7 +134,7 @@ void *worker_thread(void *arg) {
 	struct image_rgb dummy_img = {NULL, NULL, NULL};
 	if (atomic_load(&finished_worker_threads) == info->pargs->workers_num &&
 		!atomic_exchange(&output_termination_sent, true)) {
-		for (uint8_t i = 0; i < info->pargs->writers_num; i++) {
+		for (size_t i = 0; i < info->pargs->writers_num; i++) {
 			queue_push(info->output_q, dummy_img, 0, 0, NULL);
 		}
 	}
